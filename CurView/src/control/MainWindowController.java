@@ -3,10 +3,13 @@ package control;
 import java.util.HashMap;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.shape.Line;
+import model.HilbertCurve;
 
 public class MainWindowController
 {
@@ -48,5 +51,28 @@ public class MainWindowController
 		tabCanvasMap = new HashMap<>();
 		tabCanvasMap.put(tabHilbertCurve, canvasHilbertDrawTarget);
 		tabCanvasMap.put(tabKochCurve, canvasKochDrawTarget);
+	}
+	
+	@FXML
+	private void cmdDraw()
+	{
+		canvasHilbertDrawTarget.setWidth(8192);
+		canvasHilbertDrawTarget.setHeight(8192);
+		
+		GraphicsContext gctx = canvasHilbertDrawTarget.getGraphicsContext2D();
+		HilbertCurve hc = new HilbertCurve();
+		int lineLength = (int)sliderLineWidth.getValue();
+		int iterations = (int)sliderIterations.getValue();
+		
+		gctx.clearRect(0, 0, canvasHilbertDrawTarget.getWidth(), canvasHilbertDrawTarget.getHeight());
+		
+		for(Line line : hc.build(new Line(0,0,0,lineLength), iterations))
+		{
+			gctx.beginPath();
+			gctx.moveTo(line.getStartX(), line.getStartY());
+			gctx.lineTo(line.getEndX(), line.getEndY());
+			gctx.closePath();
+			gctx.stroke();
+		}
 	}
 }
