@@ -58,7 +58,6 @@ public abstract class LSystemJFX extends LSystem<Line>
 			switch(constants.get(cstr))
 			{
 				case MOVE_FWD_DRAW:
-					currentPosition.setStrokeWidth(1);
 					rvalCollection.add( new Line(currentPosition.getStartX(), currentPosition.getStartY(), currentPosition.getEndX(), currentPosition.getEndY()) );
 					translation = new Translate(currentPosition.getEndX(), currentPosition.getEndY());
 					p2d = translation.transform(currentPosition.getEndX() - currentPosition.getStartX(), currentPosition.getEndY() - currentPosition.getStartY());
