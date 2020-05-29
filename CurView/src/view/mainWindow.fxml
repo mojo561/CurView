@@ -61,7 +61,7 @@
         </rowConstraints>
          <children>
             <Label text="StartX" GridPane.columnIndex="1" GridPane.valignment="TOP" />
-            <Slider fx:id="sliderStartX" blockIncrement="100.0" majorTickUnit="50.0" max="1000.0" minorTickCount="20" showTickLabels="true" GridPane.columnIndex="2">
+            <Slider fx:id="sliderStartX" blockIncrement="1.0" majorTickUnit="50.0" max="1000.0" minorTickCount="2" showTickLabels="true" GridPane.columnIndex="2">
                <padding>
                   <Insets right="20.0" />
                </padding>
@@ -70,7 +70,7 @@
                </cursor>
             </Slider>
             <Label text="StartY" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-            <Slider fx:id="sliderStartY" blockIncrement="100.0" layoutX="80.0" layoutY="66.0" majorTickUnit="50.0" max="1000.0" minorTickCount="20" showTickLabels="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <Slider fx:id="sliderStartY" blockIncrement="1.0" layoutX="80.0" layoutY="66.0" majorTickUnit="50.0" max="1000.0" minorTickCount="2" showTickLabels="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <padding>
                   <Insets right="20.0" />
                </padding>

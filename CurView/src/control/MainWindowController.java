@@ -8,7 +8,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeType;
+import model.BinaryCurve;
 import model.HilbertCurve;
 
 public class MainWindowController
@@ -60,17 +63,23 @@ public class MainWindowController
 		canvasHilbertDrawTarget.setHeight(8192);
 		
 		GraphicsContext gctx = canvasHilbertDrawTarget.getGraphicsContext2D();
+		
 		HilbertCurve hc = new HilbertCurve();
+		//BinaryCurve bc = new BinaryCurve();
+		
 		int lineLength = (int)sliderLineWidth.getValue();
 		int iterations = (int)sliderIterations.getValue();
 		
 		gctx.clearRect(0, 0, canvasHilbertDrawTarget.getWidth(), canvasHilbertDrawTarget.getHeight());
 		
-		for(Line line : hc.build(new Line(0,0,0,lineLength), iterations))
+		for(Line line : hc.build(new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue(), sliderStartY.getValue() + lineLength), iterations))
 		{
 			gctx.beginPath();
 			gctx.moveTo(line.getStartX(), line.getStartY());
 			gctx.lineTo(line.getEndX(), line.getEndY());
+			
+			gctx.setLineWidth(2);
+			
 			gctx.closePath();
 			gctx.stroke();
 		}
