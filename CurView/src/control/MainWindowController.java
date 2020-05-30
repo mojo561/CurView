@@ -1,5 +1,6 @@
 package control;
 
+import java.util.Collection;
 import java.util.HashMap;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -73,10 +74,15 @@ public class MainWindowController
 		canvasLSystemMap = new HashMap<>();
 		
 		tabCanvasMap.put(tabHilbertCurve, canvasHilbertDrawTarget);
-		tabCanvasMap.put(tabKochCurve, canvasKochDrawTarget);
-		tabCanvasMap.put(tabKochSnowflake, canvasKochSnowflakeDrawTarget);
-		
 		canvasLSystemMap.put(canvasHilbertDrawTarget, new HilbertCurve());
+		
+		tabCanvasMap.put(tabKochCurve, canvasKochDrawTarget);
+		canvasLSystemMap.put(canvasKochDrawTarget, null);
+		
+		tabCanvasMap.put(tabKochSnowflake, canvasKochSnowflakeDrawTarget);
+		canvasLSystemMap.put(canvasKochSnowflakeDrawTarget, null);
+		
+		canvasCurrentDrawTarget = tabCanvasMap.get( tabpane.getTabs().get(0) );
 
 		tabpane.getSelectionModel().selectedItemProperty().addListener( (obs, oldTab, newTab) -> {
 			Canvas oldCanvas = tabCanvasMap.get(oldTab);
@@ -84,26 +90,31 @@ public class MainWindowController
 			gctx.clearRect(0, 0, oldCanvas.getWidth(), oldCanvas.getHeight());
 			oldCanvas.setWidth(100);
 			oldCanvas.setHeight(100);
+			
+			canvasCurrentDrawTarget = tabCanvasMap.get(newTab);
 		});
 	}
 	
 	@FXML
 	private void cmdDraw()
 	{
-		canvasHilbertDrawTarget.setWidth(8192);
-		canvasHilbertDrawTarget.setHeight(8192);
+		if(canvasCurrentDrawTarget == null)
+		{
+			return;
+		}
 		
-		GraphicsContext gctx = canvasHilbertDrawTarget.getGraphicsContext2D();
+		canvasCurrentDrawTarget.setWidth(8192);
+		canvasCurrentDrawTarget.setHeight(8192);
 		
-		HilbertCurve hc = new HilbertCurve();
-		//BinaryCurve bc = new BinaryCurve();
-		
+		GraphicsContext gctx = canvasCurrentDrawTarget.getGraphicsContext2D();
 		int lineLength = (int)sliderLineWidth.getValue();
 		int iterations = (int)sliderIterations.getValue();
+		Line start = new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue(), sliderStartY.getValue() + lineLength);
+		Collection<Line> lines = canvasLSystemMap.get(canvasCurrentDrawTarget).build(start, iterations);
 		
-		gctx.clearRect(0, 0, canvasHilbertDrawTarget.getWidth(), canvasHilbertDrawTarget.getHeight());
+		gctx.clearRect(0, 0, canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight());
 		
-		for(Line line : hc.build(new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue(), sliderStartY.getValue() + lineLength), iterations))
+		for(Line line : lines)
 		{
 			gctx.beginPath();
 			gctx.moveTo(line.getStartX(), line.getStartY());

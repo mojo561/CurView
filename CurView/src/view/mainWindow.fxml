@@ -26,7 +26,7 @@
         <tabs>
           <Tab fx:id="tabHilbertCurve" closable="false" text="Hilbert Curve">
             <content>
-                  <ScrollPane>
+                  <ScrollPane pannable="true">
                      <content>
                         <Canvas fx:id="canvasHilbertDrawTarget" height="100.0" width="100.0" />
                      </content>
@@ -35,7 +35,7 @@
           </Tab>
             <Tab fx:id="tabKochCurve" closable="false" text="Koch Curve">
                <content>
-                  <ScrollPane>
+                  <ScrollPane pannable="true">
                      <content>
                         <Canvas fx:id="canvasKochDrawTarget" height="100.0" width="100.0" />
                      </content>
@@ -44,7 +44,7 @@
             </Tab>
             <Tab fx:id="tabKochSnowflake" closable="false" text="Koch Snowflake">
                <content>
-                  <ScrollPane>
+                  <ScrollPane pannable="true">
                      <content>
                         <Canvas fx:id="canvasKochSnowflakeDrawTarget" height="100.0" width="100.0" />
                      </content>
