@@ -8,11 +8,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeType;
 import model.BinaryCurve;
 import model.HilbertCurve;
+import model.LSystemJFX;
 
 public class MainWindowController
 {
@@ -22,6 +22,9 @@ public class MainWindowController
 	@FXML
 	private TabPane tabpane;
 	
+	/*****************
+	 * TAB
+	 *****************/
 	@FXML
 	private Tab tabHilbertCurve;
 	
@@ -29,11 +32,25 @@ public class MainWindowController
 	private Tab tabKochCurve;
 	
 	@FXML
+	private Tab tabKochSnowflake;
+	
+	/*****************
+	 * CANVAS
+	 *****************/
+	@FXML
 	private Canvas canvasHilbertDrawTarget;
 	
 	@FXML
 	private Canvas canvasKochDrawTarget;
 	
+	@FXML
+	private Canvas canvasKochSnowflakeDrawTarget;
+	
+	private Canvas canvasCurrentDrawTarget;
+	
+	/*****************
+	 * SLIDER
+	 *****************/
 	@FXML
 	private Slider sliderStartX;
 	
@@ -47,13 +64,27 @@ public class MainWindowController
 	private Slider sliderLineWidth;
 	
 	private HashMap<Tab, Canvas> tabCanvasMap;
+	private HashMap<Canvas, LSystemJFX> canvasLSystemMap;
 	
 	@FXML
 	private void initialize()
 	{
 		tabCanvasMap = new HashMap<>();
+		canvasLSystemMap = new HashMap<>();
+		
 		tabCanvasMap.put(tabHilbertCurve, canvasHilbertDrawTarget);
 		tabCanvasMap.put(tabKochCurve, canvasKochDrawTarget);
+		tabCanvasMap.put(tabKochSnowflake, canvasKochSnowflakeDrawTarget);
+		
+		canvasLSystemMap.put(canvasHilbertDrawTarget, new HilbertCurve());
+
+		tabpane.getSelectionModel().selectedItemProperty().addListener( (obs, oldTab, newTab) -> {
+			Canvas oldCanvas = tabCanvasMap.get(oldTab);
+			GraphicsContext gctx = oldCanvas.getGraphicsContext2D();
+			gctx.clearRect(0, 0, oldCanvas.getWidth(), oldCanvas.getHeight());
+			oldCanvas.setWidth(100);
+			oldCanvas.setHeight(100);
+		});
 	}
 	
 	@FXML

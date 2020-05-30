@@ -65,10 +65,14 @@ public abstract class LSystemJFX extends LSystem<Line>
 					currentPosition.setStartY(currentPosition.getEndY());
 					currentPosition.setEndX(p2d.getX());
 					currentPosition.setEndY(p2d.getY());
-					
 					break;
 				case MOVE_FWD_NODRAW:
-					//TODO
+					translation = new Translate(currentPosition.getEndX(), currentPosition.getEndY());
+					p2d = translation.transform(currentPosition.getEndX() - currentPosition.getStartX(), currentPosition.getEndY() - currentPosition.getStartY());
+					currentPosition.setStartX(currentPosition.getEndX());
+					currentPosition.setStartY(currentPosition.getEndY());
+					currentPosition.setEndX(p2d.getX());
+					currentPosition.setEndY(p2d.getY());
 					break;
 				case POP_STATE:
 					currentPosition = doStackPop(stack);

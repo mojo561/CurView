@@ -24,7 +24,7 @@
    <children>
       <TabPane fx:id="tabpane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
-          <Tab fx:id="tabHilbertCurve" closable="false" text="Hilbert">
+          <Tab fx:id="tabHilbertCurve" closable="false" text="Hilbert Curve">
             <content>
                   <ScrollPane>
                      <content>
@@ -33,11 +33,20 @@
                   </ScrollPane>
             </content>
           </Tab>
-            <Tab fx:id="tabKochCurve" closable="false" text="Koch">
+            <Tab fx:id="tabKochCurve" closable="false" text="Koch Curve">
                <content>
                   <ScrollPane>
                      <content>
                         <Canvas fx:id="canvasKochDrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab fx:id="tabKochSnowflake" closable="false" text="Koch Snowflake">
+               <content>
+                  <ScrollPane>
+                     <content>
+                        <Canvas fx:id="canvasKochSnowflakeDrawTarget" height="100.0" width="100.0" />
                      </content>
                   </ScrollPane>
                </content>
