@@ -109,6 +109,7 @@ public class MainWindowController
 		GraphicsContext gctx = canvasCurrentDrawTarget.getGraphicsContext2D();
 		int lineLength = (int)sliderLineWidth.getValue();
 		int iterations = (int)sliderIterations.getValue();
+		//TODO: if currentDrawTarget == HilbertDrawTarget, line = ..., otherwise, line = ... (until we add something to the GUI in the future, we can control the rotation of the resulting curve here)
 		Line start = new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue(), sliderStartY.getValue() + lineLength);
 		Collection<Line> lines = canvasLSystemMap.get(canvasCurrentDrawTarget).build(start, iterations);
 		
