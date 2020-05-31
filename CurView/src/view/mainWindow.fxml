@@ -33,7 +33,7 @@
                   </ScrollPane>
             </content>
           </Tab>
-            <Tab fx:id="tabKochCurve" closable="false" text="Koch Curve">
+            <Tab fx:id="tabKochCurve" closable="false" text="Koch A">
                <content>
                   <ScrollPane pannable="true">
                      <content>
@@ -42,11 +42,20 @@
                   </ScrollPane>
                </content>
             </Tab>
-            <Tab fx:id="tabKochSnowflake" closable="false" text="Koch Snowflake">
+            <Tab fx:id="tabKochSnowflake" closable="false" text="Koch B">
                <content>
                   <ScrollPane pannable="true">
                      <content>
                         <Canvas fx:id="canvasKochSnowflakeDrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab fx:id="tabBinaryTree" closable="false" text="Binary Tree">
+               <content>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <Canvas fx:id="canvasBinaryTreeDrawTarget" height="100.0" width="100.0" />
                      </content>
                   </ScrollPane>
                </content>

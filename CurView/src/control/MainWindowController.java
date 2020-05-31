@@ -3,6 +3,7 @@ package control;
 import java.util.Collection;
 import java.util.HashMap;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -13,7 +14,12 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeType;
 import model.BinaryCurve;
 import model.HilbertCurve;
+import model.KochCurve;
+import model.KochIslandLakeCurve;
+import model.KochSnowflakeCurve;
+import model.KochVariantACurve;
 import model.LSystemJFX;
+import model.SierpinskiArrowCurve;
 
 public class MainWindowController
 {
@@ -35,6 +41,18 @@ public class MainWindowController
 	@FXML
 	private Tab tabKochSnowflake;
 	
+	@FXML
+	private Tab tabKochIL;
+	
+	@FXML
+	private Tab tabKochVariantA;
+	
+	@FXML
+	private Tab tabSierpinskiArrow;
+	
+	@FXML
+	private Tab tabBinaryTree;
+	
 	/*****************
 	 * CANVAS
 	 *****************/
@@ -47,6 +65,21 @@ public class MainWindowController
 	@FXML
 	private Canvas canvasKochSnowflakeDrawTarget;
 	
+	@FXML
+	private Canvas canvasKochILDrawTarget;
+	
+	@FXML
+	private Canvas canvasKochVariantADrawTarget;
+	
+	@FXML
+	private Canvas canvasSierpinskiArrowDrawTarget;
+	
+	@FXML
+	private Canvas canvasBinaryTreeDrawTarget;
+	
+	/**
+	 * Not included in GUI. This is just holds references to other Canvas objects.
+	 */
 	private Canvas canvasCurrentDrawTarget;
 	
 	/*****************
@@ -66,6 +99,14 @@ public class MainWindowController
 	
 	private HashMap<Tab, Canvas> tabCanvasMap;
 	private HashMap<Canvas, LSystemJFX> canvasLSystemMap;
+	private final int MAX_WIDTH;
+	private final int MAX_HEIGHT;
+	
+	public MainWindowController()
+	{
+		MAX_WIDTH = 8192;
+		MAX_HEIGHT = 8192;
+	}
 	
 	@FXML
 	private void initialize()
@@ -77,10 +118,22 @@ public class MainWindowController
 		canvasLSystemMap.put(canvasHilbertDrawTarget, new HilbertCurve());
 		
 		tabCanvasMap.put(tabKochCurve, canvasKochDrawTarget);
-		canvasLSystemMap.put(canvasKochDrawTarget, null);
+		canvasLSystemMap.put(canvasKochDrawTarget, new KochCurve());
 		
 		tabCanvasMap.put(tabKochSnowflake, canvasKochSnowflakeDrawTarget);
-		canvasLSystemMap.put(canvasKochSnowflakeDrawTarget, null);
+		canvasLSystemMap.put(canvasKochSnowflakeDrawTarget, new KochSnowflakeCurve());
+		
+		tabCanvasMap.put(tabKochIL, canvasKochILDrawTarget);
+		canvasLSystemMap.put(canvasKochILDrawTarget, new KochIslandLakeCurve());
+		
+		tabCanvasMap.put(tabKochVariantA, canvasKochVariantADrawTarget);
+		canvasLSystemMap.put(canvasKochVariantADrawTarget, new KochVariantACurve());
+		
+		tabCanvasMap.put(tabSierpinskiArrow, canvasSierpinskiArrowDrawTarget);
+		canvasLSystemMap.put(canvasSierpinskiArrowDrawTarget, new SierpinskiArrowCurve());
+		
+		tabCanvasMap.put(tabBinaryTree, canvasBinaryTreeDrawTarget);
+		canvasLSystemMap.put(canvasBinaryTreeDrawTarget, new BinaryCurve());
 		
 		canvasCurrentDrawTarget = tabCanvasMap.get( tabpane.getTabs().get(0) );
 
@@ -103,15 +156,27 @@ public class MainWindowController
 			return;
 		}
 		
-		canvasCurrentDrawTarget.setWidth(8192);
-		canvasCurrentDrawTarget.setHeight(8192);
+		canvasCurrentDrawTarget.setWidth(MAX_WIDTH);
+		canvasCurrentDrawTarget.setHeight(MAX_HEIGHT);
 		
 		GraphicsContext gctx = canvasCurrentDrawTarget.getGraphicsContext2D();
 		int lineLength = (int)sliderLineWidth.getValue();
 		int iterations = (int)sliderIterations.getValue();
+		
 		//TODO: if currentDrawTarget == HilbertDrawTarget, line = ..., otherwise, line = ... (until we add something to the GUI in the future, we can control the rotation of the resulting curve here)
-		Line start = new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue(), sliderStartY.getValue() + lineLength);
-		Collection<Line> lines = canvasLSystemMap.get(canvasCurrentDrawTarget).build(start, iterations);
+		Point2D pstart;
+		Line lstart;
+		if(canvasCurrentDrawTarget == canvasHilbertDrawTarget)
+		{
+			pstart = new Point2D(0, lineLength);
+		}
+		else
+		{
+			pstart = new Point2D(lineLength, 0);
+		}
+		lstart = new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + pstart.getX(), sliderStartY.getValue() + pstart.getY());
+		
+		Collection<Line> lines = canvasLSystemMap.get(canvasCurrentDrawTarget).build(lstart, iterations);
 		
 		gctx.clearRect(0, 0, canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight());
 		
