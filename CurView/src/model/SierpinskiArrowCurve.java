@@ -12,6 +12,6 @@ public class SierpinskiArrowCurve extends LSystemJFX
 		constants.put("+", LSystem.operation.TURN_LEFT);
 		constants.put("-", LSystem.operation.TURN_RIGHT);
 		
-		turnAngle = 60;
+		turnAngleDegrees = 60;
 	}
 }

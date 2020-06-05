@@ -19,7 +19,7 @@ public class BinaryCurve extends LSystemJFX
 		constants.put("[", operation.PUSH_STATE);
 		constants.put("]", operation.POP_STATE);
 		
-		turnAngle = 45f;
+		turnAngleDegrees = 45f;
 	}
 
 	/**
@@ -33,7 +33,7 @@ public class BinaryCurve extends LSystemJFX
 	{
 		stack.push(line);
 		Line rval = new Line(line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY());
-		Rotate rot = new Rotate(turnAngle, rval.getStartX(), rval.getStartY());
+		Rotate rot = new Rotate(turnAngleDegrees, rval.getStartX(), rval.getStartY());
 		Point2D p2d = rot.transform(rval.getEndX(), rval.getEndY());
 		rval.setEndX(p2d.getX());
 		rval.setEndY(p2d.getY());
@@ -53,7 +53,7 @@ public class BinaryCurve extends LSystemJFX
 			return null;
 		}
 		Line rval = stack.pop();
-		Rotate rot = new Rotate(turnAngle * -1, rval.getStartX(), rval.getStartY());
+		Rotate rot = new Rotate(turnAngleDegrees * -1, rval.getStartX(), rval.getStartY());
 		Point2D p2d = rot.transform(rval.getEndX(), rval.getEndY());
 		rval.setEndX(p2d.getX());
 		rval.setEndY(p2d.getY());

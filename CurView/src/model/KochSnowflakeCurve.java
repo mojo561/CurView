@@ -1,14 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
-/**
- *
- * @author mojo
- */
 public class KochSnowflakeCurve extends LSystemJFX
 {
 	public KochSnowflakeCurve()
@@ -20,6 +11,6 @@ public class KochSnowflakeCurve extends LSystemJFX
 		constants.put("+", operation.TURN_RIGHT);
 		constants.put("-", operation.TURN_LEFT);
 		
-		turnAngle = 60;
+		turnAngleDegrees = 60;
 	}
 }

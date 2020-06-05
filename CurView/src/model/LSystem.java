@@ -29,18 +29,14 @@ public abstract class LSystem<T>
 	 */
 	protected HashMap<String, String> variables;
 	protected String axiom;
-	protected float turnAngle;
+	protected float turnAngleDegrees;
 	
 	public LSystem()
 	{
 		constants = new HashMap<>();
 		variables = new HashMap<>();
 	}
-	
-	/**
-	 * @param iterations
-	 * @return 
-	 */
+
 	protected String buildStringSequence(int iterations) throws OutOfMemoryError
 	{
 		StringBuilder output = new StringBuilder(axiom);

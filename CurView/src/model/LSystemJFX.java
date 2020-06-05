@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
 import java.util.ArrayDeque;
@@ -14,10 +9,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
-/**
- *
- * @author mojo
- */
 public abstract class LSystemJFX extends LSystem<Line>
 {
 	private final int MAX_COLLECTIONSIZE = 500000;
@@ -99,13 +90,13 @@ public abstract class LSystemJFX extends LSystem<Line>
 					currentPosition = doStackPush(currentPosition, stack);
 					break;
 				case TURN_LEFT:
-					rotation = new Rotate(turnAngle, currentPosition.getStartX(), currentPosition.getStartY());
+					rotation = new Rotate(turnAngleDegrees, currentPosition.getStartX(), currentPosition.getStartY());
 					p2d = rotation.transform(currentPosition.getEndX(), currentPosition.getEndY());
 					currentPosition.setEndX(p2d.getX());
 					currentPosition.setEndY(p2d.getY());
 					break;
 				case TURN_RIGHT:
-					rotation = new Rotate(turnAngle * -1, currentPosition.getStartX(), currentPosition.getStartY());
+					rotation = new Rotate(turnAngleDegrees * -1, currentPosition.getStartX(), currentPosition.getStartY());
 					p2d = rotation.transform(currentPosition.getEndX(), currentPosition.getEndY());
 					currentPosition.setEndX(p2d.getX());
 					currentPosition.setEndY(p2d.getY());

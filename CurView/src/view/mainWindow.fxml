@@ -87,6 +87,24 @@
                   </ScrollPane>
                </content>
             </Tab>
+            <Tab fx:id="tabSierpinskiTriangle" closable="false" text="Sierpinski Triangle">
+               <content>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <Canvas fx:id="canvasSierpinskiTriangleDrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab fx:id="tabPlant" closable="false" text="Plant">
+               <content>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <Canvas fx:id="canvasPlantDrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
         </tabs>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

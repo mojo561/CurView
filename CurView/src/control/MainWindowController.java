@@ -18,7 +18,9 @@ import model.KochIslandLakeCurve;
 import model.KochSnowflakeCurve;
 import model.KochVariantACurve;
 import model.LSystemJFX;
+import model.PlantCurve;
 import model.SierpinskiArrowCurve;
+import model.SierpinskiTriangleCurve;
 
 public class MainWindowController
 {
@@ -50,7 +52,13 @@ public class MainWindowController
 	private Tab tabSierpinskiArrow;
 	
 	@FXML
+	private Tab tabSierpinskiTriangle;
+	
+	@FXML
 	private Tab tabBinaryTree;
+	
+	@FXML
+	private Tab tabPlant;
 	
 	/*****************
 	 * CANVAS
@@ -74,7 +82,13 @@ public class MainWindowController
 	private Canvas canvasSierpinskiArrowDrawTarget;
 	
 	@FXML
+	private Canvas canvasSierpinskiTriangleDrawTarget;
+	
+	@FXML
 	private Canvas canvasBinaryTreeDrawTarget;
+	
+	@FXML
+	private Canvas canvasPlantDrawTarget;
 	
 	/**
 	 * Not included in GUI. This is just holds references to other Canvas objects.
@@ -131,8 +145,14 @@ public class MainWindowController
 		tabCanvasMap.put(tabSierpinskiArrow, canvasSierpinskiArrowDrawTarget);
 		canvasLSystemMap.put(canvasSierpinskiArrowDrawTarget, new SierpinskiArrowCurve());
 		
+		tabCanvasMap.put(tabSierpinskiTriangle, canvasSierpinskiTriangleDrawTarget);
+		canvasLSystemMap.put(canvasSierpinskiTriangleDrawTarget, new SierpinskiTriangleCurve());
+		
 		tabCanvasMap.put(tabBinaryTree, canvasBinaryTreeDrawTarget);
 		canvasLSystemMap.put(canvasBinaryTreeDrawTarget, new BinaryCurve());
+		
+		tabCanvasMap.put(tabPlant, canvasPlantDrawTarget);
+		canvasLSystemMap.put(canvasPlantDrawTarget, new PlantCurve());
 		
 		canvasCurrentDrawTarget = tabCanvasMap.get( tabpane.getTabs().get(0) );
 
