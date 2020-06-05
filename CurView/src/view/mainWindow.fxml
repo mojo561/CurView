@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="control.MainWindowController">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="-Infinity" prefHeight="500.0" vgrow="ALWAYS" />
+    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="60.0" vgrow="NEVER" />
+  </rowConstraints>
+   <children>
+      <TabPane fx:id="tabpane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab fx:id="tabHilbertCurve" closable="false" text="Hilbert Curve">
+            <content>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <Canvas fx:id="canvasHilbertDrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+            </content>
+          </Tab>
+            <Tab fx:id="tabKochCurve" closable="false" text="Koch A">
+               <content>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <Canvas fx:id="canvasKochDrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab fx:id="tabKochSnowflake" closable="false" text="Koch B">
+               <content>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <Canvas fx:id="canvasKochSnowflakeDrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab fx:id="tabKochIL" closable="false" text="Koch C">
+               <content>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <Canvas fx:id="canvasKochILDrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab fx:id="tabKochVariantA" closable="false" text="Koch D">
+               <content>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <Canvas fx:id="canvasKochVariantADrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab fx:id="tabBinaryTree" closable="false" text="Binary Tree">
+               <content>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <Canvas fx:id="canvasBinaryTreeDrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab fx:id="tabSierpinskiArrow" closable="false" text="Sierpinski Arrow">
+               <content>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <Canvas fx:id="canvasSierpinskiArrowDrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab fx:id="tabSierpinskiTriangle" closable="false" text="Sierpinski Triangle">
+               <content>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <Canvas fx:id="canvasSierpinskiTriangleDrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab fx:id="tabPlant" closable="false" text="Plant">
+               <content>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <Canvas fx:id="canvasPlantDrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+        </tabs>
+         <GridPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </GridPane.margin>
+      </TabPane>
+      <GridPane prefHeight="300.0" prefWidth="431.0" GridPane.rowIndex="1">
+        <columnConstraints>
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="60.0" />
+          <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="83.0" minWidth="-Infinity" prefWidth="62.0" />
+          <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="-Infinity" prefWidth="420.0" />
+            <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="89.0" minWidth="-Infinity" prefWidth="86.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="184.0" minWidth="-Infinity" prefWidth="175.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="StartX" GridPane.columnIndex="1" GridPane.valignment="TOP" />
+            <Slider fx:id="sliderStartX" blockIncrement="1.0" majorTickUnit="50.0" max="1000.0" minorTickCount="2" showTickLabels="true" GridPane.columnIndex="2">
+               <padding>
+                  <Insets right="20.0" />
+               </padding>
+               <cursor>
+                  <Cursor fx:constant="H_RESIZE" />
+               </cursor>
+            </Slider>
+            <Label text="StartY" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP" />
+            <Slider fx:id="sliderStartY" blockIncrement="1.0" layoutX="80.0" layoutY="66.0" majorTickUnit="50.0" max="1000.0" minorTickCount="2" showTickLabels="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <padding>
+                  <Insets right="20.0" />
+               </padding>
+               <cursor>
+                  <Cursor fx:constant="H_RESIZE" />
+               </cursor>
+            </Slider>
+            <Button fx:id="buttonCmdDraw" mnemonicParsing="false" onMouseClicked="#cmdDraw" text="Draw" />
+            <Label text="Iterations" GridPane.columnIndex="3" GridPane.valignment="TOP" />
+            <Slider fx:id="sliderIterations" blockIncrement="1.0" layoutX="143.0" layoutY="53.0" majorTickUnit="1.0" max="10.0" maxWidth="-Infinity" minWidth="-Infinity" minorTickCount="0" prefWidth="170.0" showTickLabels="true" snapToTicks="true" GridPane.columnIndex="4" GridPane.halignment="LEFT">
+               <padding>
+                  <Insets left="10.0" right="10.0" />
+               </padding>
+               <cursor>
+                  <Cursor fx:constant="H_RESIZE" />
+               </cursor>
+            </Slider>
+            <Slider fx:id="sliderLineWidth" blockIncrement="1.0" layoutX="638.0" layoutY="11.0" majorTickUnit="1.0" max="10.0" maxWidth="-Infinity" min="1.0" minWidth="-Infinity" minorTickCount="0" prefWidth="170.0" showTickLabels="true" snapToTicks="true" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+               <padding>
+                  <Insets left="10.0" right="10.0" />
+               </padding>
+               <cursor>
+                  <Cursor fx:constant="H_RESIZE" />
+               </cursor>
+            </Slider>
+            <Label text="Line Width" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+         </children>
+      </GridPane>
+   </children>
+</GridPane>
