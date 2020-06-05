@@ -51,11 +51,38 @@
                   </ScrollPane>
                </content>
             </Tab>
+            <Tab fx:id="tabKochIL" closable="false" text="Koch C">
+               <content>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <Canvas fx:id="canvasKochILDrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab fx:id="tabKochVariantA" closable="false" text="Koch D">
+               <content>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <Canvas fx:id="canvasKochVariantADrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
             <Tab fx:id="tabBinaryTree" closable="false" text="Binary Tree">
                <content>
                   <ScrollPane pannable="true">
                      <content>
                         <Canvas fx:id="canvasBinaryTreeDrawTarget" height="100.0" width="100.0" />
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab fx:id="tabSierpinskiArrow" closable="false" text="Sierpinski Arrow">
+               <content>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <Canvas fx:id="canvasSierpinskiArrowDrawTarget" height="100.0" width="100.0" />
                      </content>
                   </ScrollPane>
                </content>

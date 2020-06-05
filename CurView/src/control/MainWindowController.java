@@ -11,7 +11,6 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.StrokeType;
 import model.BinaryCurve;
 import model.HilbertCurve;
 import model.KochCurve;
@@ -104,8 +103,8 @@ public class MainWindowController
 	
 	public MainWindowController()
 	{
-		MAX_WIDTH = 8192;
-		MAX_HEIGHT = 8192;
+		MAX_WIDTH = 4000;//8192;
+		MAX_HEIGHT = 4000;//8192;
 	}
 	
 	@FXML
@@ -145,6 +144,7 @@ public class MainWindowController
 			oldCanvas.setHeight(100);
 			
 			canvasCurrentDrawTarget = tabCanvasMap.get(newTab);
+			canvasCurrentDrawTarget.setVisible(true);
 		});
 	}
 	
@@ -163,7 +163,7 @@ public class MainWindowController
 		int lineLength = (int)sliderLineWidth.getValue();
 		int iterations = (int)sliderIterations.getValue();
 		
-		//TODO: if currentDrawTarget == HilbertDrawTarget, line = ..., otherwise, line = ... (until we add something to the GUI in the future, we can control the rotation of the resulting curve here)
+		//TODO: until we add something to the GUI in the future, we can control the starting rotation of the resulting curve here
 		Point2D pstart;
 		Line lstart;
 		if(canvasCurrentDrawTarget == canvasHilbertDrawTarget)

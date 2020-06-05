@@ -20,6 +20,8 @@ import javafx.scene.transform.Translate;
  */
 public abstract class LSystemJFX extends LSystem<Line>
 {
+	private final int MAX_COLLECTIONSIZE = 500000;
+	
 	@Override
 	protected Line doStackPush(Line line, Deque<Line> stack)
 	{
@@ -43,13 +45,29 @@ public abstract class LSystemJFX extends LSystem<Line>
 		Collection<Line> rvalCollection = new ArrayList<Line>();
 		Deque<Line> stack = new ArrayDeque<Line>();
 		Line currentPosition = new Line(origin.getStartX(), origin.getStartY(), origin.getEndX(), origin.getEndY());
-		String lsysSequence = buildStringSequence(iterations);
+		String lsysSequence;
+		try
+		{
+			lsysSequence = buildStringSequence(iterations);
+		}
+		catch(OutOfMemoryError e)
+		{
+			System.err.println( String.format("Error during LSystem sequence build routine: \"%s\", using axiom as the output sequence", e) );
+			lsysSequence = axiom;
+		}
+		
 		Translate translation;
 		Rotate rotation;
 		Point2D p2d;
 		
 		for(int i = 0; i < lsysSequence.length(); ++i)
 		{
+			if(rvalCollection.size() >= MAX_COLLECTIONSIZE)
+			{
+				System.err.println( String.format("Warning: too many LSystem elements, stopping at size %d", rvalCollection.size()) );
+				break;
+			}
+			
 			String cstr = String.valueOf( lsysSequence.charAt(i) );
 			if(!constants.containsKey(cstr))
 			{

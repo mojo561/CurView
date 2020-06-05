@@ -41,7 +41,7 @@ public abstract class LSystem<T>
 	 * @param iterations
 	 * @return 
 	 */
-	protected String buildStringSequence(int iterations)
+	protected String buildStringSequence(int iterations) throws OutOfMemoryError
 	{
 		StringBuilder output = new StringBuilder(axiom);
 		for(int i = 0; i < iterations; ++i)
