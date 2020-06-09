@@ -176,6 +176,13 @@ public class MainWindowController
 			return;
 		}
 		
+		//new: 2020.06.09
+		buttonCmdDraw.setDisable(true);
+		sliderIterations.setDisable(true);
+		sliderLineWidth.setDisable(true);
+		sliderStartX.setDisable(true);
+		sliderStartY.setDisable(true);
+		
 		canvasCurrentDrawTarget.setWidth(MAX_WIDTH);
 		canvasCurrentDrawTarget.setHeight(MAX_HEIGHT);
 		
@@ -211,5 +218,12 @@ public class MainWindowController
 			gctx.closePath();
 			gctx.stroke();
 		}
+		
+		//new: 2020.06.09
+		buttonCmdDraw.setDisable(false);
+		sliderIterations.setDisable(false);
+		sliderLineWidth.setDisable(false);
+		sliderStartX.setDisable(false);
+		sliderStartY.setDisable(false);
 	}
 }
