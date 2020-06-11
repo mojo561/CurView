@@ -37,8 +37,7 @@ public abstract class LSystem<T>
 		variables = new HashMap<>();
 	}
 
-	//TODO: still crashing when String too large... even when using other threads
-	protected String buildStringSequence(int iterations) throws OutOfMemoryError
+	protected String buildStringSequence(int iterations)
 	{
 		StringBuilder output = new StringBuilder(axiom);
 		for(int i = 0; i < iterations; ++i)

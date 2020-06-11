@@ -29,7 +29,6 @@ public final class LSystemBuilderTask extends Task<Collection<Line>>
 		if(lsystem != null)
 		{
 			this.lsystem = lsystem;
-			System.out.println(this.lsystem);
 		}
 	}
 	
