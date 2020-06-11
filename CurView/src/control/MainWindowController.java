@@ -126,8 +126,8 @@ public class MainWindowController
 	
 	public MainWindowController()
 	{
-		MAX_WIDTH = 4000;//8192;
-		MAX_HEIGHT = 4000;//8192;
+		MAX_WIDTH = 4000;
+		MAX_HEIGHT = 4000;
 	}
 	
 	@FXML

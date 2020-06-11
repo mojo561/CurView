@@ -49,7 +49,7 @@ public abstract class LSystemJFX extends LSystem<Line>
 		}
 		catch(OutOfMemoryError e)
 		{
-			System.err.println( String.format("Error during LSystem sequence build routine: \"%s\", using axiom as the output sequence", e) );
+			System.err.println( String.format("Error during LSystem String sequence build: \"%s\", using axiom as the output sequence", e) );
 			lsysSequence = axiom;
 		}
 		
