@@ -2,8 +2,12 @@ package control;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -17,6 +21,7 @@ import model.KochCurve;
 import model.KochIslandLakeCurve;
 import model.KochSnowflakeCurve;
 import model.KochVariantACurve;
+import model.LSystemBuilderTask;
 import model.LSystemJFX;
 import model.PlantCurve;
 import model.SierpinskiArrowCurve;
@@ -110,8 +115,12 @@ public class MainWindowController
 	@FXML
 	private Slider sliderLineWidth;
 	
+	private HashSet<Node> pausableNodeMap;
 	private HashMap<Tab, Canvas> tabCanvasMap;
 	private HashMap<Canvas, LSystemJFX> canvasLSystemMap;
+	private EventHandler<WorkerStateEvent> eventlsystemBuildSuccess;
+	private EventHandler<WorkerStateEvent> eventlsystemBuildRunning;
+	private EventHandler<WorkerStateEvent> eventlsystemBuildFailed;
 	private final int MAX_WIDTH;
 	private final int MAX_HEIGHT;
 	
@@ -124,8 +133,16 @@ public class MainWindowController
 	@FXML
 	private void initialize()
 	{
+		pausableNodeMap = new HashSet<>();
 		tabCanvasMap = new HashMap<>();
 		canvasLSystemMap = new HashMap<>();
+		
+		pausableNodeMap.add(buttonCmdDraw);
+		pausableNodeMap.add(sliderIterations);
+		pausableNodeMap.add(sliderLineWidth);
+		pausableNodeMap.add(sliderStartX);
+		pausableNodeMap.add(sliderStartY);
+		pausableNodeMap.add(tabpane);
 		
 		tabCanvasMap.put(tabHilbertCurve, canvasHilbertDrawTarget);
 		canvasLSystemMap.put(canvasHilbertDrawTarget, new HilbertCurve());
@@ -166,6 +183,34 @@ public class MainWindowController
 			canvasCurrentDrawTarget = tabCanvasMap.get(newTab);
 			canvasCurrentDrawTarget.setVisible(true);
 		});
+		
+		eventlsystemBuildRunning = e -> setNodesDisabled(pausableNodeMap, true);
+		eventlsystemBuildFailed = e -> setNodesDisabled(pausableNodeMap, false);
+		
+		eventlsystemBuildSuccess = e -> {
+			setNodesDisabled(pausableNodeMap, false);
+			GraphicsContext gctx = canvasCurrentDrawTarget.getGraphicsContext2D();
+			gctx.clearRect(0, 0, canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight());
+			
+			try
+			{
+				for(Line line : (Collection<Line>)e.getSource().getValue())
+				{
+					gctx.beginPath();
+					gctx.moveTo(line.getStartX(), line.getStartY());
+					gctx.lineTo(line.getEndX(), line.getEndY());
+					
+					gctx.setLineWidth(2);
+					
+					gctx.closePath();
+					gctx.stroke();
+				}
+			}
+			catch(ClassCastException ex)
+			{
+				System.err.println(ex.getMessage());
+			}
+		};
 	}
 	
 	@FXML
@@ -176,17 +221,9 @@ public class MainWindowController
 			return;
 		}
 		
-		//new: 2020.06.09
-		buttonCmdDraw.setDisable(true);
-		sliderIterations.setDisable(true);
-		sliderLineWidth.setDisable(true);
-		sliderStartX.setDisable(true);
-		sliderStartY.setDisable(true);
-		
 		canvasCurrentDrawTarget.setWidth(MAX_WIDTH);
 		canvasCurrentDrawTarget.setHeight(MAX_HEIGHT);
 		
-		GraphicsContext gctx = canvasCurrentDrawTarget.getGraphicsContext2D();
 		int lineLength = (int)sliderLineWidth.getValue();
 		int iterations = (int)sliderIterations.getValue();
 		
@@ -203,27 +240,22 @@ public class MainWindowController
 		}
 		lstart = new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + pstart.getX(), sliderStartY.getValue() + pstart.getY());
 		
-		Collection<Line> lines = canvasLSystemMap.get(canvasCurrentDrawTarget).build(lstart, iterations);
+		LSystemBuilderTask buildTask = new LSystemBuilderTask();
+		buildTask.setOnRunning(eventlsystemBuildRunning);
+		buildTask.setOnSucceeded(eventlsystemBuildSuccess);
+		buildTask.setOnFailed(eventlsystemBuildFailed);
+		buildTask.setIterations(iterations);
+		buildTask.setOrigin(lstart);
+		buildTask.setLSystem(canvasLSystemMap.get(canvasCurrentDrawTarget));
 		
-		gctx.clearRect(0, 0, canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight());
-		
-		for(Line line : lines)
-		{
-			gctx.beginPath();
-			gctx.moveTo(line.getStartX(), line.getStartY());
-			gctx.lineTo(line.getEndX(), line.getEndY());
-			
-			gctx.setLineWidth(2);
-			
-			gctx.closePath();
-			gctx.stroke();
-		}
-		
-		//new: 2020.06.09
-		buttonCmdDraw.setDisable(false);
-		sliderIterations.setDisable(false);
-		sliderLineWidth.setDisable(false);
-		sliderStartX.setDisable(false);
-		sliderStartY.setDisable(false);
+		Thread buildThread = new Thread(buildTask);
+		buildThread.start();
+	}
+	
+	private void setNodesDisabled(Collection<Node> nodeList, boolean disabled)
+	{
+		nodeList.forEach(
+				node -> node.setDisable(disabled)
+		);
 	}
 }

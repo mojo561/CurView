@@ -1,6 +1,6 @@
 package model;
 
-public class HilbertCurve extends LSystemJFX
+public final class HilbertCurve extends LSystemJFX
 {
 	public HilbertCurve()
 	{

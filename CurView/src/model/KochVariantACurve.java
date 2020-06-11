@@ -1,6 +1,6 @@
 package model;
 
-public class KochVariantACurve extends LSystemJFX
+public final class KochVariantACurve extends LSystemJFX
 {
 	public KochVariantACurve()
 	{

@@ -1,6 +1,6 @@
 package model;
 
-public class KochCurve extends LSystemJFX
+public final class KochCurve extends LSystemJFX
 {
 	public KochCurve()
 	{

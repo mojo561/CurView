@@ -1,6 +1,6 @@
 package model;
 
-public class KochIslandLakeCurve extends LSystemJFX
+public final class KochIslandLakeCurve extends LSystemJFX
 {
 	public KochIslandLakeCurve()
 	{

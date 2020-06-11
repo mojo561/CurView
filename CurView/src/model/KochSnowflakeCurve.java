@@ -1,6 +1,6 @@
 package model;
 
-public class KochSnowflakeCurve extends LSystemJFX
+public final class KochSnowflakeCurve extends LSystemJFX
 {
 	public KochSnowflakeCurve()
 	{

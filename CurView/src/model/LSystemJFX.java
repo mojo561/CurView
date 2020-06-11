@@ -37,6 +37,12 @@ public abstract class LSystemJFX extends LSystem<Line>
 		Deque<Line> stack = new ArrayDeque<Line>();
 		Line currentPosition = new Line(origin.getStartX(), origin.getStartY(), origin.getEndX(), origin.getEndY());
 		String lsysSequence;
+		
+		if(origin == null || iterations < 0)
+		{
+			return rvalCollection;
+		}
+		
 		try
 		{
 			lsysSequence = buildStringSequence(iterations);

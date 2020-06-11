@@ -1,6 +1,6 @@
 package model;
 
-public class PlantCurve extends LSystemJFX
+public final class PlantCurve extends LSystemJFX
 {
 	public PlantCurve()
 	{

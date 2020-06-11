@@ -1,6 +1,6 @@
 package model;
 
-public class SierpinskiArrowCurve extends LSystemJFX
+public final class SierpinskiArrowCurve extends LSystemJFX
 {
 	public SierpinskiArrowCurve()
 	{

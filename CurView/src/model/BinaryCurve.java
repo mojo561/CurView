@@ -5,7 +5,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.Line;
 import javafx.scene.transform.Rotate;
 
-public class BinaryCurve extends LSystemJFX
+public final class BinaryCurve extends LSystemJFX
 {
 	public BinaryCurve()
 	{

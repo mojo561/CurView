@@ -1,6 +1,6 @@
 package model;
 
-public class SierpinskiTriangleCurve extends LSystemJFX
+public final class SierpinskiTriangleCurve extends LSystemJFX
 {
 	public SierpinskiTriangleCurve()
 	{
