@@ -3,6 +3,7 @@ package model;
 import java.util.Collection;
 
 import javafx.concurrent.Task;
+import javafx.geometry.BoundingBox;
 import javafx.scene.shape.Line;
 
 public final class LSystemBuilderTask extends Task<Collection<Line>>
@@ -10,6 +11,7 @@ public final class LSystemBuilderTask extends Task<Collection<Line>>
 	private Line origin;
 	private int iterations;
 	private LSystemJFX lsystem;
+	private BoundingBox drawArea;
 
 	public void setOrigin(Line origin)
 	{
@@ -32,12 +34,17 @@ public final class LSystemBuilderTask extends Task<Collection<Line>>
 		}
 	}
 	
+	public void setDrawArea(BoundingBox drawArea)
+	{
+		this.drawArea = drawArea;
+	}
+	
 	@Override
 	protected Collection<Line> call() throws Exception
 	{
 		if(lsystem != null)
 		{
-			return lsystem.build(origin, iterations);
+			return lsystem.build(origin, iterations, drawArea);
 		}
 		return null;
 	}

@@ -6,14 +6,17 @@ import java.util.HashSet;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.shape.Line;
 import model.BinaryCurve;
 import model.HilbertCurve;
@@ -115,9 +118,13 @@ public class MainWindowController
 	@FXML
 	private Slider sliderLineWidth;
 	
-	private HashSet<Node> pausableNodeMap;
-	private HashMap<Tab, Canvas> tabCanvasMap;
-	private HashMap<Canvas, LSystemJFX> canvasLSystemMap;
+	//TODO: test
+//	@FXML
+//	private ScrollPane scrollPaneTest;
+	
+	private HashSet<Node> mapPausableNodes;
+	private HashMap<Tab, Canvas> mapTabCanvas;
+	private HashMap<Canvas, LSystemJFX> mapCanvasLSystem;
 	private EventHandler<WorkerStateEvent> eventlsystemBuildSuccess;
 	private EventHandler<WorkerStateEvent> eventlsystemBuildRunning;
 	private EventHandler<WorkerStateEvent> eventlsystemBuildFailed;
@@ -133,62 +140,71 @@ public class MainWindowController
 	@FXML
 	private void initialize()
 	{
-		pausableNodeMap = new HashSet<>();
-		tabCanvasMap = new HashMap<>();
-		canvasLSystemMap = new HashMap<>();
+		mapPausableNodes = new HashSet<>();
+		mapTabCanvas = new HashMap<>();
+		mapCanvasLSystem = new HashMap<>();
 		
-		pausableNodeMap.add(buttonCmdDraw);
-		pausableNodeMap.add(sliderIterations);
-		pausableNodeMap.add(sliderLineWidth);
-		pausableNodeMap.add(sliderStartX);
-		pausableNodeMap.add(sliderStartY);
-		pausableNodeMap.add(tabpane);
+		mapPausableNodes.add(buttonCmdDraw);
+		mapPausableNodes.add(sliderIterations);
+		mapPausableNodes.add(sliderLineWidth);
+		mapPausableNodes.add(sliderStartX);
+		mapPausableNodes.add(sliderStartY);
+		mapPausableNodes.add(tabpane);
 		
-		tabCanvasMap.put(tabHilbertCurve, canvasHilbertDrawTarget);
-		canvasLSystemMap.put(canvasHilbertDrawTarget, new HilbertCurve());
+		mapTabCanvas.put(tabHilbertCurve, canvasHilbertDrawTarget);
+		mapCanvasLSystem.put(canvasHilbertDrawTarget, new HilbertCurve());
 		
-		tabCanvasMap.put(tabKochCurve, canvasKochDrawTarget);
-		canvasLSystemMap.put(canvasKochDrawTarget, new KochCurve());
+		mapTabCanvas.put(tabKochCurve, canvasKochDrawTarget);
+		mapCanvasLSystem.put(canvasKochDrawTarget, new KochCurve());
 		
-		tabCanvasMap.put(tabKochSnowflake, canvasKochSnowflakeDrawTarget);
-		canvasLSystemMap.put(canvasKochSnowflakeDrawTarget, new KochSnowflakeCurve());
+		mapTabCanvas.put(tabKochSnowflake, canvasKochSnowflakeDrawTarget);
+		mapCanvasLSystem.put(canvasKochSnowflakeDrawTarget, new KochSnowflakeCurve());
 		
-		tabCanvasMap.put(tabKochIL, canvasKochILDrawTarget);
-		canvasLSystemMap.put(canvasKochILDrawTarget, new KochIslandLakeCurve());
+		mapTabCanvas.put(tabKochIL, canvasKochILDrawTarget);
+		mapCanvasLSystem.put(canvasKochILDrawTarget, new KochIslandLakeCurve());
 		
-		tabCanvasMap.put(tabKochVariantA, canvasKochVariantADrawTarget);
-		canvasLSystemMap.put(canvasKochVariantADrawTarget, new KochVariantACurve());
+		mapTabCanvas.put(tabKochVariantA, canvasKochVariantADrawTarget);
+		mapCanvasLSystem.put(canvasKochVariantADrawTarget, new KochVariantACurve());
 		
-		tabCanvasMap.put(tabSierpinskiArrow, canvasSierpinskiArrowDrawTarget);
-		canvasLSystemMap.put(canvasSierpinskiArrowDrawTarget, new SierpinskiArrowCurve());
+		mapTabCanvas.put(tabSierpinskiArrow, canvasSierpinskiArrowDrawTarget);
+		mapCanvasLSystem.put(canvasSierpinskiArrowDrawTarget, new SierpinskiArrowCurve());
 		
-		tabCanvasMap.put(tabSierpinskiTriangle, canvasSierpinskiTriangleDrawTarget);
-		canvasLSystemMap.put(canvasSierpinskiTriangleDrawTarget, new SierpinskiTriangleCurve());
+		mapTabCanvas.put(tabSierpinskiTriangle, canvasSierpinskiTriangleDrawTarget);
+		mapCanvasLSystem.put(canvasSierpinskiTriangleDrawTarget, new SierpinskiTriangleCurve());
 		
-		tabCanvasMap.put(tabBinaryTree, canvasBinaryTreeDrawTarget);
-		canvasLSystemMap.put(canvasBinaryTreeDrawTarget, new BinaryCurve());
+		mapTabCanvas.put(tabBinaryTree, canvasBinaryTreeDrawTarget);
+		mapCanvasLSystem.put(canvasBinaryTreeDrawTarget, new BinaryCurve());
 		
-		tabCanvasMap.put(tabPlant, canvasPlantDrawTarget);
-		canvasLSystemMap.put(canvasPlantDrawTarget, new PlantCurve());
+		mapTabCanvas.put(tabPlant, canvasPlantDrawTarget);
+		mapCanvasLSystem.put(canvasPlantDrawTarget, new PlantCurve());
 		
-		canvasCurrentDrawTarget = tabCanvasMap.get( tabpane.getTabs().get(0) );
-
+		canvasCurrentDrawTarget = mapTabCanvas.get( tabpane.getTabs().get(0) );
+		
+		//TODO
+//		scrollPaneTest.addEventFilter(ScrollEvent.ANY, e -> {
+//			System.out.println(e.getDeltaX());
+//		});
+//		scrollPaneTest.viewportBoundsProperty().addListener( (a,b,c) -> {
+//			System.out.println(a);
+//			System.out.println( String.format("old:(%.2f, %.2f), new:(%.2f, %.2f)", b.getCenterX(), b.getCenterY(),c.getCenterX(), c.getCenterY()) );
+//		});
+		
 		tabpane.getSelectionModel().selectedItemProperty().addListener( (obs, oldTab, newTab) -> {
-			Canvas oldCanvas = tabCanvasMap.get(oldTab);
+			Canvas oldCanvas = mapTabCanvas.get(oldTab);
 			GraphicsContext gctx = oldCanvas.getGraphicsContext2D();
 			gctx.clearRect(0, 0, oldCanvas.getWidth(), oldCanvas.getHeight());
 			oldCanvas.setWidth(100);
 			oldCanvas.setHeight(100);
 			
-			canvasCurrentDrawTarget = tabCanvasMap.get(newTab);
+			canvasCurrentDrawTarget = mapTabCanvas.get(newTab);
 			canvasCurrentDrawTarget.setVisible(true);
 		});
 		
-		eventlsystemBuildRunning = e -> setNodesDisabled(pausableNodeMap, true);
-		eventlsystemBuildFailed = e -> setNodesDisabled(pausableNodeMap, false);
+		eventlsystemBuildRunning = e -> setNodesDisabled(mapPausableNodes, true);
+		eventlsystemBuildFailed = e -> setNodesDisabled(mapPausableNodes, false);
 		
 		eventlsystemBuildSuccess = e -> {
-			setNodesDisabled(pausableNodeMap, false);
+			setNodesDisabled(mapPausableNodes, false);
 			GraphicsContext gctx = canvasCurrentDrawTarget.getGraphicsContext2D();
 			gctx.clearRect(0, 0, canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight());
 			
@@ -246,7 +262,8 @@ public class MainWindowController
 		buildTask.setOnFailed(eventlsystemBuildFailed);
 		buildTask.setIterations(iterations);
 		buildTask.setOrigin(lstart);
-		buildTask.setLSystem(canvasLSystemMap.get(canvasCurrentDrawTarget));
+		buildTask.setLSystem(mapCanvasLSystem.get(canvasCurrentDrawTarget));
+		buildTask.setDrawArea(new BoundingBox(canvasCurrentDrawTarget.getLayoutX(), canvasCurrentDrawTarget.getLayoutY(), canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight()));
 		
 		Thread buildThread = new Thread(buildTask);
 		buildThread.start();

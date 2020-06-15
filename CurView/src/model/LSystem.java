@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 
-public abstract class LSystem<T>
+public abstract class LSystem<T, R>
 {
-	public abstract Collection<T> build(T origin, int iterations);
+	public abstract Collection<T> build(T origin, int iterations, R boundingBox);
 	protected abstract T doStackPush(T obj, Deque<T> stack);
 	protected abstract T doStackPop(Deque<T> stack);
 	
