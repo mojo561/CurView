@@ -3,6 +3,9 @@ package control;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -12,11 +15,10 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Line;
 import model.BinaryCurve;
 import model.HilbertCurve;
@@ -32,6 +34,10 @@ import model.SierpinskiTriangleCurve;
 
 public class MainWindowController
 {
+	//TODO: new
+	@FXML
+	private GridPane rootNode;
+	
 	@FXML
 	private Button buttonCmdDraw;
 	
@@ -118,23 +124,19 @@ public class MainWindowController
 	@FXML
 	private Slider sliderLineWidth;
 	
-	//TODO: test
-//	@FXML
-//	private ScrollPane scrollPaneTest;
-	
 	private HashSet<Node> mapPausableNodes;
 	private HashMap<Tab, Canvas> mapTabCanvas;
 	private HashMap<Canvas, LSystemJFX> mapCanvasLSystem;
 	private EventHandler<WorkerStateEvent> eventlsystemBuildSuccess;
 	private EventHandler<WorkerStateEvent> eventlsystemBuildRunning;
 	private EventHandler<WorkerStateEvent> eventlsystemBuildFailed;
-	private final int MAX_WIDTH;
-	private final int MAX_HEIGHT;
+//	private final int MAX_WIDTH;
+//	private final int MAX_HEIGHT;
 	
 	public MainWindowController()
 	{
-		MAX_WIDTH = 4000;
-		MAX_HEIGHT = 4000;
+//		MAX_WIDTH = 4000;
+//		MAX_HEIGHT = 4000;
 	}
 	
 	@FXML
@@ -180,14 +182,17 @@ public class MainWindowController
 		
 		canvasCurrentDrawTarget = mapTabCanvas.get( tabpane.getTabs().get(0) );
 		
-		//TODO
-//		scrollPaneTest.addEventFilter(ScrollEvent.ANY, e -> {
-//			System.out.println(e.getDeltaX());
-//		});
-//		scrollPaneTest.viewportBoundsProperty().addListener( (a,b,c) -> {
-//			System.out.println(a);
-//			System.out.println( String.format("old:(%.2f, %.2f), new:(%.2f, %.2f)", b.getCenterX(), b.getCenterY(),c.getCenterX(), c.getCenterY()) );
-//		});
+		//TODO: new
+		rootNode.heightProperty().addListener(new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+				canvasCurrentDrawTarget.setHeight(arg2.doubleValue());
+			}});
+		rootNode.widthProperty().addListener(new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+				canvasCurrentDrawTarget.setWidth(arg2.doubleValue());
+			}});
 		
 		tabpane.getSelectionModel().selectedItemProperty().addListener( (obs, oldTab, newTab) -> {
 			Canvas oldCanvas = mapTabCanvas.get(oldTab);
@@ -237,8 +242,9 @@ public class MainWindowController
 			return;
 		}
 		
-		canvasCurrentDrawTarget.setWidth(MAX_WIDTH);
-		canvasCurrentDrawTarget.setHeight(MAX_HEIGHT);
+		//TODO: new
+//		canvasCurrentDrawTarget.setWidth(MAX_WIDTH);
+//		canvasCurrentDrawTarget.setHeight(MAX_HEIGHT);
 		
 		int lineLength = (int)sliderLineWidth.getValue();
 		int iterations = (int)sliderIterations.getValue();
