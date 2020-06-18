@@ -3,6 +3,8 @@ package control;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -15,9 +17,11 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Line;
 import model.BinaryCurve;
@@ -37,6 +41,13 @@ public class MainWindowController
 	//TODO: new
 	@FXML
 	private GridPane rootNode;
+	
+	//TODO: new
+	@FXML
+	private ScrollPane scrollPaneTest;
+	
+	//TODO:new
+	private Timer timerDrawScheduler;
 	
 	@FXML
 	private Button buttonCmdDraw;
@@ -142,6 +153,7 @@ public class MainWindowController
 	@FXML
 	private void initialize()
 	{
+		timerDrawScheduler = new Timer(true);
 		mapPausableNodes = new HashSet<>();
 		mapTabCanvas = new HashMap<>();
 		mapCanvasLSystem = new HashMap<>();
@@ -182,6 +194,28 @@ public class MainWindowController
 		
 		canvasCurrentDrawTarget = mapTabCanvas.get( tabpane.getTabs().get(0) );
 		
+		//TODO:new
+//		scrollPaneTest.addEventFilter(ScrollEvent.ANY, e -> {
+//			System.out.println(e.getDeltaX());
+//		});
+		scrollPaneTest.vvalueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+				timerDrawScheduler.schedule(new TimerTask() {
+					
+					private final double foo = arg2.doubleValue();
+					
+					@Override
+					public void run() {
+						if(foo == scrollPaneTest.getVvalue())
+						{
+							System.out.println("drawing...");
+							cmdDraw();
+						}
+					}}, 1000);
+			}
+		});
+		
 		//TODO: new
 		rootNode.heightProperty().addListener(new ChangeListener<Number>(){
 			@Override
@@ -215,6 +249,8 @@ public class MainWindowController
 			
 			try
 			{
+				//TODO: debug
+				int entityCount = 0;
 				for(Line line : (Collection<Line>)e.getSource().getValue())
 				{
 					gctx.beginPath();
@@ -225,7 +261,10 @@ public class MainWindowController
 					
 					gctx.closePath();
 					gctx.stroke();
+					//TODO: debug
+					++entityCount;
 				}
+				System.out.println( String.format("draws: %d", entityCount) );
 			}
 			catch(ClassCastException ex)
 			{
@@ -260,7 +299,24 @@ public class MainWindowController
 		{
 			pstart = new Point2D(lineLength, 0);
 		}
-		lstart = new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + pstart.getX(), sliderStartY.getValue() + pstart.getY());
+		//TODO:new
+//		lstart = new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + pstart.getX(), sliderStartY.getValue() + pstart.getY());
+		double offsetVert = scrollPaneTest.getVvalue() * scrollPaneTest.getViewportBounds().getHeight();
+		double offsetHorz = scrollPaneTest.getHvalue() * scrollPaneTest.getViewportBounds().getWidth();
+		
+		System.out.println( String.format("height: (%.5f, %.5f) -> %.5f : width: (%.5f, %.5f) -> %.5f",
+				scrollPaneTest.getVvalue(),
+				scrollPaneTest.getViewportBounds().getHeight(),
+				offsetVert,
+				scrollPaneTest.getHvalue(),
+				scrollPaneTest.getViewportBounds().getWidth(),
+				offsetHorz) );
+		
+		lstart = new Line(
+				sliderStartX.getValue() - offsetHorz,
+				sliderStartY.getValue() - offsetVert,
+				(sliderStartX.getValue() + pstart.getX()) - offsetHorz,
+				(sliderStartY.getValue() + pstart.getY()) - offsetVert);
 		
 		LSystemBuilderTask buildTask = new LSystemBuilderTask();
 		buildTask.setOnRunning(eventlsystemBuildRunning);
