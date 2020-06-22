@@ -12,15 +12,18 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Line;
@@ -198,35 +201,96 @@ public class MainWindowController
 //		scrollPaneTest.addEventFilter(ScrollEvent.ANY, e -> {
 //			System.out.println(e.getDeltaX());
 //		});
-		scrollPaneTest.vvalueProperty().addListener(new ChangeListener<Number>() {
+//		ChangeListener<Number> foo = new ChangeListener<Number>() {
+//			@Override
+//			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+//				timerDrawScheduler.schedule(new TimerTask() {
+//					
+//					private final double foo = arg2.doubleValue();
+//					
+//					@Override
+//					public void run() {
+//						if(foo == scrollPaneTest.getVvalue())
+//						{
+//							System.out.println("vert value changed, drawing...");
+//							cmdDraw();
+//						}
+//					}}, 1000);
+//			}
+//		};
+//		
+//		ChangeListener<Number> bar = new ChangeListener<Number>() {
+//			@Override
+//			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+//				timerDrawScheduler.schedule(new TimerTask() {
+//					
+//					private final double foo = arg2.doubleValue();
+//					
+//					@Override
+//					public void run() {
+//						if(foo == scrollPaneTest.getHvalue())
+//						{
+//							System.out.println("horz value changed, drawing...");
+//							cmdDraw();
+//						}
+//					}}, 1000);
+//			}
+//		};
+//		
+//		scrollPaneTest.vvalueProperty().addListener(foo);
+//		scrollPaneTest.hvalueProperty().addListener(bar);
+		
+		EventHandler<MouseEvent> foo = new EventHandler<MouseEvent>()
+		{
+			private double vvalue;
+			private double hvalue;
+			
 			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				timerDrawScheduler.schedule(new TimerTask() {
-					
-					private final double foo = arg2.doubleValue();
-					
-					@Override
-					public void run() {
-						if(foo == scrollPaneTest.getVvalue())
-						{
-							System.out.println("drawing...");
-							cmdDraw();
-						}
-					}}, 1000);
+			public void handle(MouseEvent mEvent)
+			{
+				if(mEvent.getEventType() == MouseEvent.MOUSE_PRESSED)
+				{
+					vvalue = scrollPaneTest.getVvalue();
+					hvalue = scrollPaneTest.getHvalue();
+				}
+				else if(mEvent.getEventType() == MouseEvent.MOUSE_RELEASED)
+				{
+					if(vvalue != scrollPaneTest.getVvalue() || hvalue != scrollPaneTest.getHvalue())
+					{
+						System.out.println("drawing...");
+						cmdDraw();
+					}
+				}
 			}
-		});
+		};
+		
+		scrollPaneTest.setOnMousePressed(foo);
+		scrollPaneTest.setOnMouseReleased(foo);
 		
 		//TODO: new
 		rootNode.heightProperty().addListener(new ChangeListener<Number>(){
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
 				canvasCurrentDrawTarget.setHeight(arg2.doubleValue());
+//				canvasCurrentDrawTarget.setHeight(4000);
 			}});
 		rootNode.widthProperty().addListener(new ChangeListener<Number>(){
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
 				canvasCurrentDrawTarget.setWidth(arg2.doubleValue());
+//				canvasCurrentDrawTarget.setWidth(4000);
 			}});
+		
+//		scrollPaneTest.heightProperty().addListener(new ChangeListener<Number>(){
+//			@Override
+//			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+//				canvasCurrentDrawTarget.setHeight(arg2.doubleValue() + 2000);
+//			}});
+//		scrollPaneTest.widthProperty().addListener(new ChangeListener<Number>(){
+//		@Override
+//		public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+//			canvasCurrentDrawTarget.setWidth(arg2.doubleValue() + 2000);
+//		}});
 		
 		tabpane.getSelectionModel().selectedItemProperty().addListener( (obs, oldTab, newTab) -> {
 			Canvas oldCanvas = mapTabCanvas.get(oldTab);
@@ -264,7 +328,7 @@ public class MainWindowController
 					//TODO: debug
 					++entityCount;
 				}
-				System.out.println( String.format("draws: %d", entityCount) );
+				System.out.println( String.format("drew %d line nodes", entityCount) );
 			}
 			catch(ClassCastException ex)
 			{
@@ -300,23 +364,44 @@ public class MainWindowController
 			pstart = new Point2D(lineLength, 0);
 		}
 		//TODO:new
-//		lstart = new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + pstart.getX(), sliderStartY.getValue() + pstart.getY());
-		double offsetVert = scrollPaneTest.getVvalue() * scrollPaneTest.getViewportBounds().getHeight();
-		double offsetHorz = scrollPaneTest.getHvalue() * scrollPaneTest.getViewportBounds().getWidth();
+		lstart = new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + pstart.getX(), sliderStartY.getValue() + pstart.getY());
+//		double offsetVert = scrollPaneTest.getVvalue() * scrollPaneTest.getViewportBounds().getHeight();
+//		double offsetHorz = scrollPaneTest.getHvalue() * scrollPaneTest.getViewportBounds().getWidth();
+		double offsetVert = 0;//Math.floor( scrollPaneTest.getVvalue() * 100 );
+		double offsetHorz = 0;// = Math.floor( scrollPaneTest.getHvalue() * 100 );
 		
-		System.out.println( String.format("height: (%.5f, %.5f) -> %.5f : width: (%.5f, %.5f) -> %.5f",
+		//TODO:new
+		//credit: https://stackoverflow.com/a/40682080
+		for(Node node : scrollPaneTest.lookupAll(".scroll-bar"))
+		{
+			if(node instanceof ScrollBar)
+			{
+				ScrollBar sb = (ScrollBar)node;
+				if(sb.getOrientation() == Orientation.HORIZONTAL)
+				{
+					double hbarThumbSize = sb.getVisibleAmount() * sb.getWidth();
+					double hbarMinPosition =  (sb.getWidth() - hbarThumbSize) * scrollPaneTest.getHvalue();
+					offsetHorz = hbarMinPosition;
+				}
+				else if(sb.getOrientation() == Orientation.VERTICAL)
+				{
+					double vbarThumbSize = sb.getVisibleAmount() * sb.getHeight();
+					double vbarMinPosition =  (sb.getHeight() - vbarThumbSize) * scrollPaneTest.getVvalue();
+					offsetVert = vbarMinPosition;
+				}
+			}
+		}
+		
+		System.out.println( String.format("height: (%.5f, %.5f) -> %.5f : width: (%.5f, %.5f) -> %.5f (canvas height: %.5f, width: %.5f -> %.5f)",
 				scrollPaneTest.getVvalue(),
 				scrollPaneTest.getViewportBounds().getHeight(),
 				offsetVert,
 				scrollPaneTest.getHvalue(),
 				scrollPaneTest.getViewportBounds().getWidth(),
-				offsetHorz) );
-		
-		lstart = new Line(
-				sliderStartX.getValue() - offsetHorz,
-				sliderStartY.getValue() - offsetVert,
-				(sliderStartX.getValue() + pstart.getX()) - offsetHorz,
-				(sliderStartY.getValue() + pstart.getY()) - offsetVert);
+				offsetHorz,
+				canvasCurrentDrawTarget.getHeight(),
+				canvasCurrentDrawTarget.getWidth(),
+				canvasCurrentDrawTarget.getWidth() * scrollPaneTest.getHvalue()) );
 		
 		LSystemBuilderTask buildTask = new LSystemBuilderTask();
 		buildTask.setOnRunning(eventlsystemBuildRunning);
@@ -325,7 +410,11 @@ public class MainWindowController
 		buildTask.setIterations(iterations);
 		buildTask.setOrigin(lstart);
 		buildTask.setLSystem(mapCanvasLSystem.get(canvasCurrentDrawTarget));
-		buildTask.setDrawArea(new BoundingBox(canvasCurrentDrawTarget.getLayoutX(), canvasCurrentDrawTarget.getLayoutY(), canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight()));
+		//TODO:new
+//		buildTask.setDrawArea(new BoundingBox(canvasCurrentDrawTarget.getLayoutX(), canvasCurrentDrawTarget.getLayoutY(), canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight()));
+		
+//		buildTask.setDrawArea(new BoundingBox(offsetHorz, offsetVert, scrollPaneTest.getWidth(), scrollPaneTest.getHeight()));
+		buildTask.setDrawArea(new BoundingBox(offsetHorz, offsetVert, scrollPaneTest.getWidth(), scrollPaneTest.getHeight()));
 		
 		Thread buildThread = new Thread(buildTask);
 		buildThread.start();

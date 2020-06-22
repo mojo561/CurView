@@ -26,7 +26,7 @@
         <tabs>
           <Tab fx:id="tabHilbertCurve" closable="false" text="Hilbert Curve">
             <content>
-                  <ScrollPane fx:id="scrollPaneTest" pannable="true">
+                  <ScrollPane fx:id="scrollPaneTest" pannable="true" style="-fx-border-color: black;">
                      <content>
                         <Canvas fx:id="canvasHilbertDrawTarget" height="100.0" width="100.0" />
                      </content>

@@ -39,6 +39,21 @@ public final class LSystemBuilderTask extends Task<Collection<Line>>
 		this.drawArea = drawArea;
 	}
 	
+	public BoundingBox getDrawArea()
+	{
+		if(drawArea == null)
+		{
+			return new BoundingBox(0, 0, 0, 0);
+		}
+		return new BoundingBox(
+				drawArea.getMinX(),
+				drawArea.getMinY(),
+				drawArea.getMinZ(),
+				drawArea.getWidth(),
+				drawArea.getHeight(),
+				drawArea.getDepth());
+	}
+	
 	@Override
 	protected Collection<Line> call() throws Exception
 	{
