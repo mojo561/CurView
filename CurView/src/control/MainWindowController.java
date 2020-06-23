@@ -271,14 +271,14 @@ public class MainWindowController
 		rootNode.heightProperty().addListener(new ChangeListener<Number>(){
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				canvasCurrentDrawTarget.setHeight(arg2.doubleValue());
-//				canvasCurrentDrawTarget.setHeight(4000);
+//				canvasCurrentDrawTarget.setHeight(arg2.doubleValue());
+				canvasCurrentDrawTarget.setHeight(4000);
 			}});
 		rootNode.widthProperty().addListener(new ChangeListener<Number>(){
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				canvasCurrentDrawTarget.setWidth(arg2.doubleValue());
-//				canvasCurrentDrawTarget.setWidth(4000);
+//				canvasCurrentDrawTarget.setWidth(arg2.doubleValue());
+				canvasCurrentDrawTarget.setWidth(4000);
 			}});
 		
 //		scrollPaneTest.heightProperty().addListener(new ChangeListener<Number>(){
@@ -376,32 +376,38 @@ public class MainWindowController
 		{
 			if(node instanceof ScrollBar)
 			{
+				/*
+				 * thumbSize / trackSize = visibleAmount / (max - min)
+				 * thumbSize = trackSize * [ visibleAmount / (max - min) ]
+				 */
 				ScrollBar sb = (ScrollBar)node;
 				if(sb.getOrientation() == Orientation.HORIZONTAL)
 				{
-					double hbarThumbSize = sb.getVisibleAmount() * sb.getWidth();
-					double hbarMinPosition =  (sb.getWidth() - hbarThumbSize) * scrollPaneTest.getHvalue();
+//					double hbarThumbSize = sb.getVisibleAmount() * sb.getWidth();
+					double hbarMinPosition =  (canvasCurrentDrawTarget.getWidth() - sb.getWidth()) * sb.getValue(); //(sb.getWidth() - hbarThumbSize) * sb.getValue();
 					offsetHorz = hbarMinPosition;
+//					System.out.println("sb value: " + sb.getValue());
+//					System.out.println("sb width: " + sb.getWidth());
 				}
 				else if(sb.getOrientation() == Orientation.VERTICAL)
 				{
-					double vbarThumbSize = sb.getVisibleAmount() * sb.getHeight();
-					double vbarMinPosition =  (sb.getHeight() - vbarThumbSize) * scrollPaneTest.getVvalue();
+//					double vbarThumbSize = sb.getVisibleAmount() * sb.getHeight();
+					double vbarMinPosition =  (canvasCurrentDrawTarget.getHeight() - sb.getHeight()) * sb.getValue();//(sb.getHeight() - vbarThumbSize) * sb.getValue();
 					offsetVert = vbarMinPosition;
 				}
 			}
 		}
 		
-		System.out.println( String.format("height: (%.5f, %.5f) -> %.5f : width: (%.5f, %.5f) -> %.5f (canvas height: %.5f, width: %.5f -> %.5f)",
-				scrollPaneTest.getVvalue(),
-				scrollPaneTest.getViewportBounds().getHeight(),
-				offsetVert,
-				scrollPaneTest.getHvalue(),
-				scrollPaneTest.getViewportBounds().getWidth(),
-				offsetHorz,
-				canvasCurrentDrawTarget.getHeight(),
-				canvasCurrentDrawTarget.getWidth(),
-				canvasCurrentDrawTarget.getWidth() * scrollPaneTest.getHvalue()) );
+//		System.out.println( String.format("height: (%.5f, %.5f) -> %.5f : width: (%.5f, %.5f) -> %.5f (canvas height: %.5f, width: %.5f -> %.5f)",
+//				scrollPaneTest.getVvalue(),
+//				scrollPaneTest.getViewportBounds().getHeight(),
+//				offsetVert,
+//				scrollPaneTest.getHvalue(),
+//				scrollPaneTest.getViewportBounds().getWidth(),
+//				offsetHorz,
+//				canvasCurrentDrawTarget.getHeight(),
+//				canvasCurrentDrawTarget.getWidth(),
+//				canvasCurrentDrawTarget.getWidth() * scrollPaneTest.getHvalue()) );
 		
 		LSystemBuilderTask buildTask = new LSystemBuilderTask();
 		buildTask.setOnRunning(eventlsystemBuildRunning);
