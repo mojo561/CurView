@@ -2,7 +2,6 @@ package control;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,91 +42,18 @@ import model.SierpinskiTriangleCurve;
 
 public class MainWindowController
 {
-	//TODO: new
 	@FXML
 	private GridPane rootNode;
-	
-	//TODO: new
+
 	@FXML
 	private ScrollPane scrollPaneTest;
-	
-	//TODO:new
-	private Timer timerDrawScheduler;
 	
 	@FXML
 	private Button buttonCmdDraw;
 	
 	@FXML
 	private TabPane tabpaneMain;
-	
-	/*****************
-	 * TAB
-	 *****************/
-//	@FXML
-//	private Tab tabHilbertCurve;
-//	
-//	@FXML
-//	private Tab tabKochCurve;
-//	
-//	@FXML
-//	private Tab tabKochSnowflake;
-//	
-//	@FXML
-//	private Tab tabKochIL;
-//	
-//	@FXML
-//	private Tab tabKochVariantA;
-//	
-//	@FXML
-//	private Tab tabSierpinskiArrow;
-//	
-//	@FXML
-//	private Tab tabSierpinskiTriangle;
-//	
-//	@FXML
-//	private Tab tabBinaryTree;
-//	
-//	@FXML
-//	private Tab tabPlant;
-	
-	/*****************
-	 * CANVAS
-	 *****************/
-//	@FXML
-//	private Canvas canvasHilbertDrawTarget;
-//	
-//	@FXML
-//	private Canvas canvasKochDrawTarget;
-//	
-//	@FXML
-//	private Canvas canvasKochSnowflakeDrawTarget;
-//	
-//	@FXML
-//	private Canvas canvasKochILDrawTarget;
-//	
-//	@FXML
-//	private Canvas canvasKochVariantADrawTarget;
-//	
-//	@FXML
-//	private Canvas canvasSierpinskiArrowDrawTarget;
-//	
-//	@FXML
-//	private Canvas canvasSierpinskiTriangleDrawTarget;
-//	
-//	@FXML
-//	private Canvas canvasBinaryTreeDrawTarget;
-//	
-//	@FXML
-//	private Canvas canvasPlantDrawTarget;
-	
-	/**
-	 * Not included in GUI. This is just holds references to other Canvas objects.
-	 */
-	private Canvas canvasCurrentDrawTarget;
-	
-	/*****************
-	 * SLIDER
-	 *****************/
+
 	@FXML
 	private Slider sliderStartX;
 	
@@ -140,20 +66,19 @@ public class MainWindowController
 	@FXML
 	private Slider sliderLineWidth;
 	
+	private Timer timerDrawScheduler;
+	private Canvas canvasCurrentDrawTarget;
 	private HashSet<Node> mapPausableNodes;
-//	private HashMap<Tab, Canvas> mapTabCanvas;
-//	private HashMap<Canvas, LSystemJFX> mapCanvasLSystem;
-//	private HashMap<Tab, LSystemJFX> mapTabLSystem;
 	private EventHandler<WorkerStateEvent> eventlsystemBuildSuccess;
 	private EventHandler<WorkerStateEvent> eventlsystemBuildRunning;
 	private EventHandler<WorkerStateEvent> eventlsystemBuildFailed;
-//	private final int MAX_WIDTH;
-//	private final int MAX_HEIGHT;
+	private final int MAX_WIDTH;
+	private final int MAX_HEIGHT;
 	
 	public MainWindowController()
 	{
-//		MAX_WIDTH = 4000;
-//		MAX_HEIGHT = 4000;
+		MAX_WIDTH = 4000;
+		MAX_HEIGHT = 4000;
 	}
 	
 	private ArrayList<Tab> vaTabBuilder(ETabTags ...tagIDs)
@@ -184,10 +109,6 @@ public class MainWindowController
 	{
 		timerDrawScheduler = new Timer(true);
 		mapPausableNodes = new HashSet<>();
-//		mapTabCanvas = new HashMap<>();
-//		mapCanvasLSystem = new HashMap<>();
-		
-//		mapTabLSystem = new HashMap<>();
 		
 		canvasCurrentDrawTarget = new Canvas();
 		
@@ -218,35 +139,6 @@ public class MainWindowController
 		mapPausableNodes.add(sliderStartX);
 		mapPausableNodes.add(sliderStartY);
 		mapPausableNodes.add(tabpaneMain);
-		
-//		mapTabCanvas.put(tabHilbertCurve, canvasHilbertDrawTarget);
-//		mapCanvasLSystem.put(canvasHilbertDrawTarget, new HilbertCurve());
-//		
-//		mapTabCanvas.put(tabKochCurve, canvasKochDrawTarget);
-//		mapCanvasLSystem.put(canvasKochDrawTarget, new KochCurve());
-//		
-//		mapTabCanvas.put(tabKochSnowflake, canvasKochSnowflakeDrawTarget);
-//		mapCanvasLSystem.put(canvasKochSnowflakeDrawTarget, new KochSnowflakeCurve());
-//		
-//		mapTabCanvas.put(tabKochIL, canvasKochILDrawTarget);
-//		mapCanvasLSystem.put(canvasKochILDrawTarget, new KochIslandLakeCurve());
-//		
-//		mapTabCanvas.put(tabKochVariantA, canvasKochVariantADrawTarget);
-//		mapCanvasLSystem.put(canvasKochVariantADrawTarget, new KochVariantACurve());
-//		
-//		mapTabCanvas.put(tabSierpinskiArrow, canvasSierpinskiArrowDrawTarget);
-//		mapCanvasLSystem.put(canvasSierpinskiArrowDrawTarget, new SierpinskiArrowCurve());
-//		
-//		mapTabCanvas.put(tabSierpinskiTriangle, canvasSierpinskiTriangleDrawTarget);
-//		mapCanvasLSystem.put(canvasSierpinskiTriangleDrawTarget, new SierpinskiTriangleCurve());
-//		
-//		mapTabCanvas.put(tabBinaryTree, canvasBinaryTreeDrawTarget);
-//		mapCanvasLSystem.put(canvasBinaryTreeDrawTarget, new BinaryCurve());
-//		
-//		mapTabCanvas.put(tabPlant, canvasPlantDrawTarget);
-//		mapCanvasLSystem.put(canvasPlantDrawTarget, new PlantCurve());
-//		
-//		canvasCurrentDrawTarget = mapTabCanvas.get( tabpane.getTabs().get(0) );
 		
 		//TODO:new
 //		scrollPaneTest.addEventFilter(ScrollEvent.ANY, e -> {
@@ -291,7 +183,7 @@ public class MainWindowController
 //		scrollPaneTest.vvalueProperty().addListener(foo);
 //		scrollPaneTest.hvalueProperty().addListener(bar);
 		
-		EventHandler<MouseEvent> foo = new EventHandler<MouseEvent>()
+		EventHandler<MouseEvent> eventScrollPaneMouseEvent = new EventHandler<MouseEvent>()
 		{
 			private double vvalue;
 			private double hvalue;
@@ -315,49 +207,44 @@ public class MainWindowController
 			}
 		};
 		
-		scrollPaneTest.setOnMousePressed(foo);
-		scrollPaneTest.setOnMouseReleased(foo);
+		scrollPaneTest.setOnMousePressed(eventScrollPaneMouseEvent);
+		scrollPaneTest.setOnMouseReleased(eventScrollPaneMouseEvent);
 		
 		//TODO: new
 		rootNode.heightProperty().addListener(new ChangeListener<Number>(){
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-//				canvasCurrentDrawTarget.setHeight(arg2.doubleValue());
-				canvasCurrentDrawTarget.setHeight(4000);
+				//TODO: hmmm..
+				double newHeight = arg2.doubleValue() + 1000;
+				if(newHeight <= MAX_HEIGHT)
+				{
+					canvasCurrentDrawTarget.setHeight(newHeight);
+				}
+				else
+				{
+					canvasCurrentDrawTarget.setHeight(MAX_HEIGHT);
+				}
 			}});
 		rootNode.widthProperty().addListener(new ChangeListener<Number>(){
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-//				canvasCurrentDrawTarget.setWidth(arg2.doubleValue());
-				canvasCurrentDrawTarget.setWidth(4000);
+				//TODO: hmmm..
+				double newWidth = arg2.doubleValue() + 1000;
+				if(newWidth <= MAX_WIDTH)
+				{
+					canvasCurrentDrawTarget.setWidth(newWidth);
+				}
+				else
+				{
+					canvasCurrentDrawTarget.setWidth(MAX_WIDTH);
+				}
 			}});
 		
-//		scrollPaneTest.heightProperty().addListener(new ChangeListener<Number>(){
-//			@Override
-//			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-//				canvasCurrentDrawTarget.setHeight(arg2.doubleValue() + 2000);
-//			}});
-//		scrollPaneTest.widthProperty().addListener(new ChangeListener<Number>(){
-//		@Override
-//		public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-//			canvasCurrentDrawTarget.setWidth(arg2.doubleValue() + 2000);
-//		}});
-		
 		tabpaneMain.getSelectionModel().selectedItemProperty().addListener( (obs, oldTab, newTab) -> {
-			//TODO: set content of oldTab to null, set content of newTab to scrollPaneTest with content canvasCurrentDrawTarget
 			oldTab.setContent(null);
 			newTab.setContent(scrollPaneTest);
 			GraphicsContext gctx = canvasCurrentDrawTarget.getGraphicsContext2D();
 			gctx.clearRect(0, 0, canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight());
-			
-//			Canvas oldCanvas = mapTabCanvas.get(oldTab);
-//			GraphicsContext gctx = oldCanvas.getGraphicsContext2D();
-//			gctx.clearRect(0, 0, oldCanvas.getWidth(), oldCanvas.getHeight());
-//			oldCanvas.setWidth(100);
-//			oldCanvas.setHeight(100);
-//			
-//			canvasCurrentDrawTarget = mapTabCanvas.get(newTab);
-//			canvasCurrentDrawTarget.setVisible(true);
 		});
 		
 		eventlsystemBuildRunning = e -> setNodesDisabled(mapPausableNodes, true);
@@ -385,6 +272,7 @@ public class MainWindowController
 					//TODO: debug
 					++entityCount;
 				}
+				//TODO: debug
 				System.out.println( String.format("drew %d line nodes", entityCount) );
 			}
 			catch(ClassCastException ex)
@@ -402,69 +290,38 @@ public class MainWindowController
 			return;
 		}
 		
-		//TODO: new
-//		canvasCurrentDrawTarget.setWidth(MAX_WIDTH);
-//		canvasCurrentDrawTarget.setHeight(MAX_HEIGHT);
-		
 		int lineLength = (int)sliderLineWidth.getValue();
 		int iterations = (int)sliderIterations.getValue();
 		
 		//TODO: until we add something to the GUI in the future, we can control the starting rotation of the resulting curve here
 		Point2D pstart;
 		Line lstart;
-//		if(canvasCurrentDrawTarget == canvasHilbertDrawTarget)
-		{
-			pstart = new Point2D(0, lineLength);
-		}
-//		else
-//		{
-//			pstart = new Point2D(lineLength, 0);
-//		}
-		//TODO:new
-		lstart = new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + pstart.getX(), sliderStartY.getValue() + pstart.getY());
-//		double offsetVert = scrollPaneTest.getVvalue() * scrollPaneTest.getViewportBounds().getHeight();
-//		double offsetHorz = scrollPaneTest.getHvalue() * scrollPaneTest.getViewportBounds().getWidth();
-		double offsetVert = 0;//Math.floor( scrollPaneTest.getVvalue() * 100 );
-		double offsetHorz = 0;// = Math.floor( scrollPaneTest.getHvalue() * 100 );
 		
-		//TODO:new
+		pstart = new Point2D(lineLength, 0);
+			
+		lstart = new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + pstart.getX(), sliderStartY.getValue() + pstart.getY());
+		double offsetVert = 0;
+		double offsetHorz = 0;
+		
 		//credit: https://stackoverflow.com/a/40682080
+		//TODO: since we're now dealing with the scrollbar in the controller, is there any way we can add our own ScrollBars instead of relying on this lookupAll method?
 		for(Node node : scrollPaneTest.lookupAll(".scroll-bar"))
 		{
 			if(node instanceof ScrollBar)
 			{
-				/*
-				 * thumbSize / trackSize = visibleAmount / (max - min)
-				 * thumbSize = trackSize * [ visibleAmount / (max - min) ]
-				 */
 				ScrollBar sb = (ScrollBar)node;
 				if(sb.getOrientation() == Orientation.HORIZONTAL)
 				{
-//					double hbarThumbSize = sb.getVisibleAmount() * sb.getWidth();
-					double hbarMinPosition =  (canvasCurrentDrawTarget.getWidth() - sb.getWidth()) * sb.getValue(); //(sb.getWidth() - hbarThumbSize) * sb.getValue();
+					double hbarMinPosition =  (canvasCurrentDrawTarget.getWidth() - sb.getWidth()) * sb.getValue();
 					offsetHorz = hbarMinPosition;
-//					System.out.println("sb value: " + sb.getValue());
-//					System.out.println("sb width: " + sb.getWidth());
 				}
 				else if(sb.getOrientation() == Orientation.VERTICAL)
 				{
-//					double vbarThumbSize = sb.getVisibleAmount() * sb.getHeight();
-					double vbarMinPosition =  (canvasCurrentDrawTarget.getHeight() - sb.getHeight()) * sb.getValue();//(sb.getHeight() - vbarThumbSize) * sb.getValue();
+					double vbarMinPosition =  (canvasCurrentDrawTarget.getHeight() - sb.getHeight()) * sb.getValue();
 					offsetVert = vbarMinPosition;
 				}
 			}
 		}
-		
-//		System.out.println( String.format("height: (%.5f, %.5f) -> %.5f : width: (%.5f, %.5f) -> %.5f (canvas height: %.5f, width: %.5f -> %.5f)",
-//				scrollPaneTest.getVvalue(),
-//				scrollPaneTest.getViewportBounds().getHeight(),
-//				offsetVert,
-//				scrollPaneTest.getHvalue(),
-//				scrollPaneTest.getViewportBounds().getWidth(),
-//				offsetHorz,
-//				canvasCurrentDrawTarget.getHeight(),
-//				canvasCurrentDrawTarget.getWidth(),
-//				canvasCurrentDrawTarget.getWidth() * scrollPaneTest.getHvalue()) );
 		
 		LSystemBuilderTask buildTask = new LSystemBuilderTask();
 		buildTask.setOnRunning(eventlsystemBuildRunning);
@@ -473,7 +330,6 @@ public class MainWindowController
 		buildTask.setIterations(iterations);
 		buildTask.setOrigin(lstart);
 		
-		//TODO: iterate through all tabs in tabpaneMain, use the ID to determine which LSystem to use...
 		tabpaneMain.getTabs().forEach(tab -> {
 			if(tab.isSelected())
 			{
@@ -513,12 +369,7 @@ public class MainWindowController
 				return;
 			}
 		});
-		//buildTask.setLSystem(mapCanvasLSystem.get(canvasCurrentDrawTarget));
-		
-		//TODO:new
-//		buildTask.setDrawArea(new BoundingBox(canvasCurrentDrawTarget.getLayoutX(), canvasCurrentDrawTarget.getLayoutY(), canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight()));
-		
-//		buildTask.setDrawArea(new BoundingBox(offsetHorz, offsetVert, scrollPaneTest.getWidth(), scrollPaneTest.getHeight()));
+
 		buildTask.setDrawArea(new BoundingBox(offsetHorz, offsetVert, scrollPaneTest.getWidth(), scrollPaneTest.getHeight()));
 		
 		Thread buildThread = new Thread(buildTask);
