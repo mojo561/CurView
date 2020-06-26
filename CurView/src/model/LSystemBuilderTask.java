@@ -1,6 +1,7 @@
 package model;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import javafx.concurrent.Task;
 import javafx.geometry.BoundingBox;
@@ -61,6 +62,6 @@ public final class LSystemBuilderTask extends Task<Collection<Line>>
 		{
 			return lsystem.build(origin, iterations, drawArea);
 		}
-		return null;
+		return Collections.<Line>emptyList();
 	}
 }

@@ -2,12 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -22,90 +19,7 @@
     <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="60.0" vgrow="NEVER" />
   </rowConstraints>
    <children>
-      <TabPane fx:id="tabpane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
-        <tabs>
-          <Tab fx:id="tabHilbertCurve" closable="false" text="Hilbert Curve">
-            <content>
-                  <ScrollPane fx:id="scrollPaneTest" pannable="true" style="-fx-border-color: black;">
-                     <content>
-                        <Canvas fx:id="canvasHilbertDrawTarget" height="100.0" width="100.0" />
-                     </content>
-                  </ScrollPane>
-            </content>
-          </Tab>
-            <Tab fx:id="tabKochCurve" closable="false" text="Koch A">
-               <content>
-                  <ScrollPane pannable="true">
-                     <content>
-                        <Canvas fx:id="canvasKochDrawTarget" height="100.0" width="100.0" />
-                     </content>
-                  </ScrollPane>
-               </content>
-            </Tab>
-            <Tab fx:id="tabKochSnowflake" closable="false" text="Koch B">
-               <content>
-                  <ScrollPane pannable="true">
-                     <content>
-                        <Canvas fx:id="canvasKochSnowflakeDrawTarget" height="100.0" width="100.0" />
-                     </content>
-                  </ScrollPane>
-               </content>
-            </Tab>
-            <Tab fx:id="tabKochIL" closable="false" text="Koch C">
-               <content>
-                  <ScrollPane pannable="true">
-                     <content>
-                        <Canvas fx:id="canvasKochILDrawTarget" height="100.0" width="100.0" />
-                     </content>
-                  </ScrollPane>
-               </content>
-            </Tab>
-            <Tab fx:id="tabKochVariantA" closable="false" text="Koch D">
-               <content>
-                  <ScrollPane pannable="true">
-                     <content>
-                        <Canvas fx:id="canvasKochVariantADrawTarget" height="100.0" width="100.0" />
-                     </content>
-                  </ScrollPane>
-               </content>
-            </Tab>
-            <Tab fx:id="tabBinaryTree" closable="false" text="Binary Tree">
-               <content>
-                  <ScrollPane pannable="true">
-                     <content>
-                        <Canvas fx:id="canvasBinaryTreeDrawTarget" height="100.0" width="100.0" />
-                     </content>
-                  </ScrollPane>
-               </content>
-            </Tab>
-            <Tab fx:id="tabSierpinskiArrow" closable="false" text="Sierpinski Arrow">
-               <content>
-                  <ScrollPane pannable="true">
-                     <content>
-                        <Canvas fx:id="canvasSierpinskiArrowDrawTarget" height="100.0" width="100.0" />
-                     </content>
-                  </ScrollPane>
-               </content>
-            </Tab>
-            <Tab fx:id="tabSierpinskiTriangle" closable="false" text="Sierpinski Triangle">
-               <content>
-                  <ScrollPane pannable="true">
-                     <content>
-                        <Canvas fx:id="canvasSierpinskiTriangleDrawTarget" height="100.0" width="100.0" />
-                     </content>
-                  </ScrollPane>
-               </content>
-            </Tab>
-            <Tab fx:id="tabPlant" closable="false" text="Plant">
-               <content>
-                  <ScrollPane pannable="true">
-                     <content>
-                        <Canvas fx:id="canvasPlantDrawTarget" height="100.0" width="100.0" />
-                     </content>
-                  </ScrollPane>
-               </content>
-            </Tab>
-        </tabs>
+      <TabPane fx:id="tabpaneMain" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin>

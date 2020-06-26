@@ -1,5 +1,6 @@
 package control;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +29,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Line;
 import model.BinaryCurve;
+import model.ETabTags;
 import model.HilbertCurve;
 import model.KochCurve;
 import model.KochIslandLakeCurve;
@@ -56,67 +58,67 @@ public class MainWindowController
 	private Button buttonCmdDraw;
 	
 	@FXML
-	private TabPane tabpane;
+	private TabPane tabpaneMain;
 	
 	/*****************
 	 * TAB
 	 *****************/
-	@FXML
-	private Tab tabHilbertCurve;
-	
-	@FXML
-	private Tab tabKochCurve;
-	
-	@FXML
-	private Tab tabKochSnowflake;
-	
-	@FXML
-	private Tab tabKochIL;
-	
-	@FXML
-	private Tab tabKochVariantA;
-	
-	@FXML
-	private Tab tabSierpinskiArrow;
-	
-	@FXML
-	private Tab tabSierpinskiTriangle;
-	
-	@FXML
-	private Tab tabBinaryTree;
-	
-	@FXML
-	private Tab tabPlant;
+//	@FXML
+//	private Tab tabHilbertCurve;
+//	
+//	@FXML
+//	private Tab tabKochCurve;
+//	
+//	@FXML
+//	private Tab tabKochSnowflake;
+//	
+//	@FXML
+//	private Tab tabKochIL;
+//	
+//	@FXML
+//	private Tab tabKochVariantA;
+//	
+//	@FXML
+//	private Tab tabSierpinskiArrow;
+//	
+//	@FXML
+//	private Tab tabSierpinskiTriangle;
+//	
+//	@FXML
+//	private Tab tabBinaryTree;
+//	
+//	@FXML
+//	private Tab tabPlant;
 	
 	/*****************
 	 * CANVAS
 	 *****************/
-	@FXML
-	private Canvas canvasHilbertDrawTarget;
-	
-	@FXML
-	private Canvas canvasKochDrawTarget;
-	
-	@FXML
-	private Canvas canvasKochSnowflakeDrawTarget;
-	
-	@FXML
-	private Canvas canvasKochILDrawTarget;
-	
-	@FXML
-	private Canvas canvasKochVariantADrawTarget;
-	
-	@FXML
-	private Canvas canvasSierpinskiArrowDrawTarget;
-	
-	@FXML
-	private Canvas canvasSierpinskiTriangleDrawTarget;
-	
-	@FXML
-	private Canvas canvasBinaryTreeDrawTarget;
-	
-	@FXML
-	private Canvas canvasPlantDrawTarget;
+//	@FXML
+//	private Canvas canvasHilbertDrawTarget;
+//	
+//	@FXML
+//	private Canvas canvasKochDrawTarget;
+//	
+//	@FXML
+//	private Canvas canvasKochSnowflakeDrawTarget;
+//	
+//	@FXML
+//	private Canvas canvasKochILDrawTarget;
+//	
+//	@FXML
+//	private Canvas canvasKochVariantADrawTarget;
+//	
+//	@FXML
+//	private Canvas canvasSierpinskiArrowDrawTarget;
+//	
+//	@FXML
+//	private Canvas canvasSierpinskiTriangleDrawTarget;
+//	
+//	@FXML
+//	private Canvas canvasBinaryTreeDrawTarget;
+//	
+//	@FXML
+//	private Canvas canvasPlantDrawTarget;
 	
 	/**
 	 * Not included in GUI. This is just holds references to other Canvas objects.
@@ -139,8 +141,9 @@ public class MainWindowController
 	private Slider sliderLineWidth;
 	
 	private HashSet<Node> mapPausableNodes;
-	private HashMap<Tab, Canvas> mapTabCanvas;
-	private HashMap<Canvas, LSystemJFX> mapCanvasLSystem;
+//	private HashMap<Tab, Canvas> mapTabCanvas;
+//	private HashMap<Canvas, LSystemJFX> mapCanvasLSystem;
+//	private HashMap<Tab, LSystemJFX> mapTabLSystem;
 	private EventHandler<WorkerStateEvent> eventlsystemBuildSuccess;
 	private EventHandler<WorkerStateEvent> eventlsystemBuildRunning;
 	private EventHandler<WorkerStateEvent> eventlsystemBuildFailed;
@@ -153,49 +156,97 @@ public class MainWindowController
 //		MAX_HEIGHT = 4000;
 	}
 	
+	private ArrayList<Tab> vaTabBuilder(ETabTags ...tagIDs)
+	{
+		ArrayList<Tab> rval = new ArrayList<>();
+		
+		if(tagIDs == null)
+		{
+			return rval;
+		}
+		if(tagIDs.length == 0)
+		{
+			return rval;
+		}
+		
+		for(ETabTags tag : tagIDs)
+		{
+			Tab tab = new Tab();
+			tab.setId(tag.name());
+			tab.setText(tag.toString());
+			rval.add(tab);
+		}
+		return rval;
+	}
+	
 	@FXML
 	private void initialize()
 	{
 		timerDrawScheduler = new Timer(true);
 		mapPausableNodes = new HashSet<>();
-		mapTabCanvas = new HashMap<>();
-		mapCanvasLSystem = new HashMap<>();
+//		mapTabCanvas = new HashMap<>();
+//		mapCanvasLSystem = new HashMap<>();
+		
+//		mapTabLSystem = new HashMap<>();
+		
+		canvasCurrentDrawTarget = new Canvas();
+		
+		scrollPaneTest = new ScrollPane();
+		scrollPaneTest.setPannable(true);
+		scrollPaneTest.setStyle("-fx-border-color: black");
+		
+		scrollPaneTest.setContent(canvasCurrentDrawTarget);
+		
+		ArrayList<Tab> tabList = vaTabBuilder(
+				ETabTags.HILBERT,
+				ETabTags.KOCH_A,
+				ETabTags.KOCH_B,
+				ETabTags.KOCH_C,
+				ETabTags.KOCH_D,
+				ETabTags.BINARY_TREE,
+				ETabTags.SIERPINSKI_ARROW,
+				ETabTags.SIERPINSKI_TRIANGLE,
+				ETabTags.PLANT);
+		
+		tabList.get(0).setContent(scrollPaneTest);
+		
+		tabList.forEach(tab -> tabpaneMain.getTabs().add(tab));
 		
 		mapPausableNodes.add(buttonCmdDraw);
 		mapPausableNodes.add(sliderIterations);
 		mapPausableNodes.add(sliderLineWidth);
 		mapPausableNodes.add(sliderStartX);
 		mapPausableNodes.add(sliderStartY);
-		mapPausableNodes.add(tabpane);
+		mapPausableNodes.add(tabpaneMain);
 		
-		mapTabCanvas.put(tabHilbertCurve, canvasHilbertDrawTarget);
-		mapCanvasLSystem.put(canvasHilbertDrawTarget, new HilbertCurve());
-		
-		mapTabCanvas.put(tabKochCurve, canvasKochDrawTarget);
-		mapCanvasLSystem.put(canvasKochDrawTarget, new KochCurve());
-		
-		mapTabCanvas.put(tabKochSnowflake, canvasKochSnowflakeDrawTarget);
-		mapCanvasLSystem.put(canvasKochSnowflakeDrawTarget, new KochSnowflakeCurve());
-		
-		mapTabCanvas.put(tabKochIL, canvasKochILDrawTarget);
-		mapCanvasLSystem.put(canvasKochILDrawTarget, new KochIslandLakeCurve());
-		
-		mapTabCanvas.put(tabKochVariantA, canvasKochVariantADrawTarget);
-		mapCanvasLSystem.put(canvasKochVariantADrawTarget, new KochVariantACurve());
-		
-		mapTabCanvas.put(tabSierpinskiArrow, canvasSierpinskiArrowDrawTarget);
-		mapCanvasLSystem.put(canvasSierpinskiArrowDrawTarget, new SierpinskiArrowCurve());
-		
-		mapTabCanvas.put(tabSierpinskiTriangle, canvasSierpinskiTriangleDrawTarget);
-		mapCanvasLSystem.put(canvasSierpinskiTriangleDrawTarget, new SierpinskiTriangleCurve());
-		
-		mapTabCanvas.put(tabBinaryTree, canvasBinaryTreeDrawTarget);
-		mapCanvasLSystem.put(canvasBinaryTreeDrawTarget, new BinaryCurve());
-		
-		mapTabCanvas.put(tabPlant, canvasPlantDrawTarget);
-		mapCanvasLSystem.put(canvasPlantDrawTarget, new PlantCurve());
-		
-		canvasCurrentDrawTarget = mapTabCanvas.get( tabpane.getTabs().get(0) );
+//		mapTabCanvas.put(tabHilbertCurve, canvasHilbertDrawTarget);
+//		mapCanvasLSystem.put(canvasHilbertDrawTarget, new HilbertCurve());
+//		
+//		mapTabCanvas.put(tabKochCurve, canvasKochDrawTarget);
+//		mapCanvasLSystem.put(canvasKochDrawTarget, new KochCurve());
+//		
+//		mapTabCanvas.put(tabKochSnowflake, canvasKochSnowflakeDrawTarget);
+//		mapCanvasLSystem.put(canvasKochSnowflakeDrawTarget, new KochSnowflakeCurve());
+//		
+//		mapTabCanvas.put(tabKochIL, canvasKochILDrawTarget);
+//		mapCanvasLSystem.put(canvasKochILDrawTarget, new KochIslandLakeCurve());
+//		
+//		mapTabCanvas.put(tabKochVariantA, canvasKochVariantADrawTarget);
+//		mapCanvasLSystem.put(canvasKochVariantADrawTarget, new KochVariantACurve());
+//		
+//		mapTabCanvas.put(tabSierpinskiArrow, canvasSierpinskiArrowDrawTarget);
+//		mapCanvasLSystem.put(canvasSierpinskiArrowDrawTarget, new SierpinskiArrowCurve());
+//		
+//		mapTabCanvas.put(tabSierpinskiTriangle, canvasSierpinskiTriangleDrawTarget);
+//		mapCanvasLSystem.put(canvasSierpinskiTriangleDrawTarget, new SierpinskiTriangleCurve());
+//		
+//		mapTabCanvas.put(tabBinaryTree, canvasBinaryTreeDrawTarget);
+//		mapCanvasLSystem.put(canvasBinaryTreeDrawTarget, new BinaryCurve());
+//		
+//		mapTabCanvas.put(tabPlant, canvasPlantDrawTarget);
+//		mapCanvasLSystem.put(canvasPlantDrawTarget, new PlantCurve());
+//		
+//		canvasCurrentDrawTarget = mapTabCanvas.get( tabpane.getTabs().get(0) );
 		
 		//TODO:new
 //		scrollPaneTest.addEventFilter(ScrollEvent.ANY, e -> {
@@ -292,15 +343,21 @@ public class MainWindowController
 //			canvasCurrentDrawTarget.setWidth(arg2.doubleValue() + 2000);
 //		}});
 		
-		tabpane.getSelectionModel().selectedItemProperty().addListener( (obs, oldTab, newTab) -> {
-			Canvas oldCanvas = mapTabCanvas.get(oldTab);
-			GraphicsContext gctx = oldCanvas.getGraphicsContext2D();
-			gctx.clearRect(0, 0, oldCanvas.getWidth(), oldCanvas.getHeight());
-			oldCanvas.setWidth(100);
-			oldCanvas.setHeight(100);
+		tabpaneMain.getSelectionModel().selectedItemProperty().addListener( (obs, oldTab, newTab) -> {
+			//TODO: set content of oldTab to null, set content of newTab to scrollPaneTest with content canvasCurrentDrawTarget
+			oldTab.setContent(null);
+			newTab.setContent(scrollPaneTest);
+			GraphicsContext gctx = canvasCurrentDrawTarget.getGraphicsContext2D();
+			gctx.clearRect(0, 0, canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight());
 			
-			canvasCurrentDrawTarget = mapTabCanvas.get(newTab);
-			canvasCurrentDrawTarget.setVisible(true);
+//			Canvas oldCanvas = mapTabCanvas.get(oldTab);
+//			GraphicsContext gctx = oldCanvas.getGraphicsContext2D();
+//			gctx.clearRect(0, 0, oldCanvas.getWidth(), oldCanvas.getHeight());
+//			oldCanvas.setWidth(100);
+//			oldCanvas.setHeight(100);
+//			
+//			canvasCurrentDrawTarget = mapTabCanvas.get(newTab);
+//			canvasCurrentDrawTarget.setVisible(true);
 		});
 		
 		eventlsystemBuildRunning = e -> setNodesDisabled(mapPausableNodes, true);
@@ -355,14 +412,14 @@ public class MainWindowController
 		//TODO: until we add something to the GUI in the future, we can control the starting rotation of the resulting curve here
 		Point2D pstart;
 		Line lstart;
-		if(canvasCurrentDrawTarget == canvasHilbertDrawTarget)
+//		if(canvasCurrentDrawTarget == canvasHilbertDrawTarget)
 		{
 			pstart = new Point2D(0, lineLength);
 		}
-		else
-		{
-			pstart = new Point2D(lineLength, 0);
-		}
+//		else
+//		{
+//			pstart = new Point2D(lineLength, 0);
+//		}
 		//TODO:new
 		lstart = new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + pstart.getX(), sliderStartY.getValue() + pstart.getY());
 //		double offsetVert = scrollPaneTest.getVvalue() * scrollPaneTest.getViewportBounds().getHeight();
@@ -415,7 +472,49 @@ public class MainWindowController
 		buildTask.setOnFailed(eventlsystemBuildFailed);
 		buildTask.setIterations(iterations);
 		buildTask.setOrigin(lstart);
-		buildTask.setLSystem(mapCanvasLSystem.get(canvasCurrentDrawTarget));
+		
+		//TODO: iterate through all tabs in tabpaneMain, use the ID to determine which LSystem to use...
+		tabpaneMain.getTabs().forEach(tab -> {
+			if(tab.isSelected())
+			{
+				switch(ETabTags.valueOf(tab.getId()))
+				{
+				case BINARY_TREE:
+					buildTask.setLSystem(new BinaryCurve());
+					break;
+				case HILBERT:
+					buildTask.setLSystem(new HilbertCurve());
+					break;
+				case KOCH_A:
+					buildTask.setLSystem(new KochCurve());
+					break;
+				case KOCH_B:
+					buildTask.setLSystem(new KochSnowflakeCurve());
+					break;
+				case KOCH_C:
+					buildTask.setLSystem(new KochIslandLakeCurve());
+					break;
+				case KOCH_D:
+					buildTask.setLSystem(new KochVariantACurve());
+					break;
+				case PLANT:
+					buildTask.setLSystem(new PlantCurve());
+					break;
+				case SIERPINSKI_ARROW:
+					buildTask.setLSystem(new SierpinskiArrowCurve());
+					break;
+				case SIERPINSKI_TRIANGLE:
+					buildTask.setLSystem(new SierpinskiTriangleCurve());
+					break;
+				default:
+					buildTask.setLSystem(null);
+					break;
+				}
+				return;
+			}
+		});
+		//buildTask.setLSystem(mapCanvasLSystem.get(canvasCurrentDrawTarget));
+		
 		//TODO:new
 //		buildTask.setDrawArea(new BoundingBox(canvasCurrentDrawTarget.getLayoutX(), canvasCurrentDrawTarget.getLayoutY(), canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight()));
 		
