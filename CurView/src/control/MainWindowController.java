@@ -9,6 +9,7 @@ import java.util.TimerTask;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
@@ -20,6 +21,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -140,49 +142,6 @@ public class MainWindowController
 		mapPausableNodes.add(sliderStartY);
 		mapPausableNodes.add(tabpaneMain);
 		
-		//TODO:new
-//		scrollPaneTest.addEventFilter(ScrollEvent.ANY, e -> {
-//			System.out.println(e.getDeltaX());
-//		});
-//		ChangeListener<Number> foo = new ChangeListener<Number>() {
-//			@Override
-//			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-//				timerDrawScheduler.schedule(new TimerTask() {
-//					
-//					private final double foo = arg2.doubleValue();
-//					
-//					@Override
-//					public void run() {
-//						if(foo == scrollPaneTest.getVvalue())
-//						{
-//							System.out.println("vert value changed, drawing...");
-//							cmdDraw();
-//						}
-//					}}, 1000);
-//			}
-//		};
-//		
-//		ChangeListener<Number> bar = new ChangeListener<Number>() {
-//			@Override
-//			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-//				timerDrawScheduler.schedule(new TimerTask() {
-//					
-//					private final double foo = arg2.doubleValue();
-//					
-//					@Override
-//					public void run() {
-//						if(foo == scrollPaneTest.getHvalue())
-//						{
-//							System.out.println("horz value changed, drawing...");
-//							cmdDraw();
-//						}
-//					}}, 1000);
-//			}
-//		};
-//		
-//		scrollPaneTest.vvalueProperty().addListener(foo);
-//		scrollPaneTest.hvalueProperty().addListener(bar);
-		
 		EventHandler<MouseEvent> eventScrollPaneMouseEvent = new EventHandler<MouseEvent>()
 		{
 			private double vvalue;
@@ -200,6 +159,8 @@ public class MainWindowController
 				{
 					if(vvalue != scrollPaneTest.getVvalue() || hvalue != scrollPaneTest.getHvalue())
 					{
+						vvalue = scrollPaneTest.getVvalue();
+						hvalue = scrollPaneTest.getHvalue();
 						System.out.println("drawing...");
 						cmdDraw();
 					}
@@ -209,6 +170,28 @@ public class MainWindowController
 		
 		scrollPaneTest.setOnMousePressed(eventScrollPaneMouseEvent);
 		scrollPaneTest.setOnMouseReleased(eventScrollPaneMouseEvent);
+		
+		//TODO:new, works
+		ChangeListener<Number> chglstnrScrollBarEventAttacher = new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+
+				for(Node node : scrollPaneTest.lookupAll(".scroll-bar"))
+				{
+					if(node instanceof ScrollBar)
+					{
+						node.addEventHandler(MouseEvent.MOUSE_PRESSED, eventScrollPaneMouseEvent);
+						node.addEventHandler(MouseEvent.MOUSE_RELEASED, eventScrollPaneMouseEvent);
+					}
+				}
+				scrollPaneTest.hvalueProperty().removeListener(this);
+				scrollPaneTest.vvalueProperty().removeListener(this);
+			}
+		};
+		
+		scrollPaneTest.hvalueProperty().addListener(chglstnrScrollBarEventAttacher);
+		scrollPaneTest.vvalueProperty().addListener(chglstnrScrollBarEventAttacher);
+		
 		
 		//TODO: new
 		rootNode.heightProperty().addListener(new ChangeListener<Number>(){
