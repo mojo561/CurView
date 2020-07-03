@@ -14,8 +14,6 @@ import javafx.scene.transform.Translate;
 
 public abstract class LSystemJFX extends LSystem<Line, BoundingBox>
 {
-	private final int MAX_COLLECTIONSIZE = 500000;
-	
 	@Override
 	protected Line doStackPush(Line line, Deque<Line> stack)
 	{
@@ -59,14 +57,9 @@ public abstract class LSystemJFX extends LSystem<Line, BoundingBox>
 			lsysSequence = axiom;
 		}
 		
+		LBL_OUT:
 		for(int i = 0; i < lsysSequence.length(); ++i)
 		{
-			if(rvalCollection.size() >= MAX_COLLECTIONSIZE)
-			{
-				System.err.println( String.format("Warning: too many LSystem elements, stopping at size %d", rvalCollection.size()) );
-				break;
-			}
-			
 			String cstr = String.valueOf( lsysSequence.charAt(i) );
 			if(!constants.containsKey(cstr))
 			{
@@ -81,7 +74,15 @@ public abstract class LSystemJFX extends LSystem<Line, BoundingBox>
 					Point2D newLineHead = new Point2D(newLine.getEndX(), newLine.getEndY());
 					if(boundingBox.contains(newLineTail) || boundingBox.contains(newLineHead))
 					{
-						rvalCollection.add( newLine );
+						try
+						{
+							rvalCollection.add( newLine );
+						}
+						catch(Exception e)
+						{
+							System.err.println(e.getMessage());
+							break LBL_OUT;
+						}
 					}
 					
 					translation = new Translate(currentPosition.getEndX(), currentPosition.getEndY());

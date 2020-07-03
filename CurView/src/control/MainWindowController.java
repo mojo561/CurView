@@ -33,6 +33,7 @@ import model.KochCurve;
 import model.KochIslandLakeCurve;
 import model.KochSnowflakeCurve;
 import model.KochVariantACurve;
+import model.KochVariantBCurve;
 import model.LSystemBuilderTask;
 import model.PlantCurve;
 import model.SierpinskiArrowCurve;
@@ -215,8 +216,8 @@ public class MainWindowController
 				gctx.lineTo(line.getEndX(), line.getEndY());
 				
 				//TODO: trying to make the drawn lines more distinct...
-				gctx.setLineWidth(2);
-				
+				//gctx.setLineWidth(2);
+
 				gctx.closePath();
 				gctx.stroke();
 			}
@@ -238,6 +239,7 @@ public class MainWindowController
 				ETabTags.KOCH_B,
 				ETabTags.KOCH_C,
 				ETabTags.KOCH_D,
+				ETabTags.KOCH_E,
 				ETabTags.BINARY_TREE,
 				ETabTags.SIERPINSKI_ARROW,
 				ETabTags.SIERPINSKI_TRIANGLE,
@@ -324,6 +326,10 @@ public class MainWindowController
 				case KOCH_D:
 					buildTask.setOrigin(new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue(), sliderStartY.getValue() + lineLength));
 					buildTask.setLSystem(new KochVariantACurve());
+					break;
+				case KOCH_E:
+					buildTask.setOrigin(new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + lineLength, sliderStartY.getValue()));
+					buildTask.setLSystem(new KochVariantBCurve());
 					break;
 				case PLANT:
 					buildTask.setOrigin(new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + lineLength, sliderStartY.getValue()));

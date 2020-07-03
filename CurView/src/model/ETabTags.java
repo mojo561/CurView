@@ -23,6 +23,10 @@ public enum ETabTags
 	 */
 	KOCH_D("Koch D"),
 	/**
+	 * "Koch E"
+	 */
+	KOCH_E("Koch E"),
+	/**
 	 * "Binary Tree"
 	 */
 	BINARY_TREE("Binary Tree"),
