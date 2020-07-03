@@ -2,6 +2,7 @@ package control;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -9,24 +10,20 @@ import java.util.TimerTask;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Orientation;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Line;
 import model.BinaryCurve;
@@ -37,7 +34,6 @@ import model.KochIslandLakeCurve;
 import model.KochSnowflakeCurve;
 import model.KochVariantACurve;
 import model.LSystemBuilderTask;
-import model.LSystemJFX;
 import model.PlantCurve;
 import model.SierpinskiArrowCurve;
 import model.SierpinskiTriangleCurve;
@@ -46,9 +42,6 @@ public class MainWindowController
 {
 	@FXML
 	private GridPane rootNode;
-
-	@FXML
-	private ScrollPane scrollPaneTest;
 	
 	@FXML
 	private Button buttonCmdDraw;
@@ -69,6 +62,7 @@ public class MainWindowController
 	private Slider sliderLineWidth;
 	
 	private Timer timerDrawScheduler;
+	private ScrollPane scrollPaneCanvasContainer;
 	private Canvas canvasCurrentDrawTarget;
 	private HashSet<Node> mapPausableNodes;
 	private EventHandler<WorkerStateEvent> eventlsystemBuildSuccess;
@@ -81,6 +75,17 @@ public class MainWindowController
 	{
 		MAX_WIDTH = 4000;
 		MAX_HEIGHT = 4000;
+		timerDrawScheduler = new Timer(true);
+		mapPausableNodes = new HashSet<>();
+		
+		canvasCurrentDrawTarget = new Canvas();
+		canvasCurrentDrawTarget.setWidth(MAX_WIDTH);
+		canvasCurrentDrawTarget.setHeight(MAX_HEIGHT);
+		
+		scrollPaneCanvasContainer = new ScrollPane();
+		scrollPaneCanvasContainer.setPannable(true);
+		scrollPaneCanvasContainer.setStyle("-fx-border-color: black");
+		scrollPaneCanvasContainer.setContent(canvasCurrentDrawTarget);
 	}
 	
 	private ArrayList<Tab> vaTabBuilder(ETabTags ...tagIDs)
@@ -105,20 +110,127 @@ public class MainWindowController
 		}
 		return rval;
 	}
-	
+
 	@FXML
 	private void initialize()
 	{
-		timerDrawScheduler = new Timer(true);
-		mapPausableNodes = new HashSet<>();
+		EventHandler<MouseEvent> eventScrollPaneMouseEvent = new EventHandler<MouseEvent>()
+		{
+			private double vvalue;
+			private double hvalue;
+			
+			@Override
+			public void handle(MouseEvent mEvent)
+			{
+				if(mEvent.getEventType() == MouseEvent.MOUSE_PRESSED)
+				{
+					vvalue = scrollPaneCanvasContainer.getVvalue();
+					hvalue = scrollPaneCanvasContainer.getHvalue();
+				}
+				else if(mEvent.getEventType() == MouseEvent.MOUSE_RELEASED)
+				{
+					if(vvalue != scrollPaneCanvasContainer.getVvalue() || hvalue != scrollPaneCanvasContainer.getHvalue())
+					{
+						vvalue = scrollPaneCanvasContainer.getVvalue();
+						hvalue = scrollPaneCanvasContainer.getHvalue();
+						cmdDraw();
+					}
+				}
+			}
+		};
+
+		ChangeListener<Number> chglstnrScrollBarEventAttacher = new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+
+				for(Node node : scrollPaneCanvasContainer.lookupAll(".scroll-bar"))
+				{
+					if(node instanceof ScrollBar)
+					{
+						node.addEventHandler(MouseEvent.MOUSE_PRESSED, eventScrollPaneMouseEvent);
+						node.addEventHandler(MouseEvent.MOUSE_RELEASED, eventScrollPaneMouseEvent);
+					}
+				}
+				scrollPaneCanvasContainer.hvalueProperty().removeListener(this);
+				scrollPaneCanvasContainer.vvalueProperty().removeListener(this);
+			}
+		};
 		
-		canvasCurrentDrawTarget = new Canvas();
+		ChangeListener<Number> lsnrRootNodeSize = (obsValue, oldValue, newValue) -> {
+		TimerTask ttask = new TimerTask() {
+			private double oldHValue = rootNode.getHeight();
+			private double oldWValue = rootNode.getWidth();
+			@Override
+			public void run() {
+				double currentHValue = rootNode.getHeight();
+				double currentWValue = rootNode.getWidth();
+				if(oldHValue == currentHValue && oldWValue == currentWValue)
+				{
+					cmdDraw();
+				}
+			}
+		};
+		timerDrawScheduler.schedule(ttask, 1000);
+
+	};
 		
-		scrollPaneTest = new ScrollPane();
-		scrollPaneTest.setPannable(true);
-		scrollPaneTest.setStyle("-fx-border-color: black");
+		ChangeListener<Tab> lsnrTabSelected = (obs, oldTab, newTab) -> {
+			if(oldTab != null)
+			{
+				oldTab.setContent(null);
+			}
+			newTab.setContent(scrollPaneCanvasContainer);
+			GraphicsContext gctx = canvasCurrentDrawTarget.getGraphicsContext2D();
+			gctx.clearRect(0, 0, canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight());
+			scrollPaneCanvasContainer.setVvalue(0);
+			scrollPaneCanvasContainer.setHvalue(0);
+		};
 		
-		scrollPaneTest.setContent(canvasCurrentDrawTarget);
+		eventlsystemBuildRunning = e -> setNodesDisabled(mapPausableNodes, true);
+		eventlsystemBuildFailed = e -> setNodesDisabled(mapPausableNodes, false);
+		eventlsystemBuildSuccess = e -> {
+			setNodesDisabled(mapPausableNodes, false);
+			GraphicsContext gctx = canvasCurrentDrawTarget.getGraphicsContext2D();
+			gctx.clearRect(0, 0, canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight());
+			
+			Collection<Line> eventLineResults = Collections.<Line>emptyList();
+			Object eventSourceValue = e.getSource().getValue();
+			
+			if(eventSourceValue instanceof Collection<?>)
+			{
+				try
+				{
+					eventLineResults = (Collection<Line>)eventSourceValue;
+				}
+				catch(ClassCastException ex)
+				{
+					System.err.println(ex.getMessage());
+				}
+			}
+			
+			for(Line line : eventLineResults)
+			{
+				gctx.beginPath();
+				gctx.moveTo(line.getStartX(), line.getStartY());
+				gctx.lineTo(line.getEndX(), line.getEndY());
+				
+				//TODO: trying to make the drawn lines more distinct...
+				gctx.setLineWidth(2);
+				
+				gctx.closePath();
+				gctx.stroke();
+			}
+		};
+		
+		scrollPaneCanvasContainer.setOnMousePressed(eventScrollPaneMouseEvent);
+		scrollPaneCanvasContainer.setOnMouseReleased(eventScrollPaneMouseEvent);
+		scrollPaneCanvasContainer.hvalueProperty().addListener(chglstnrScrollBarEventAttacher);
+		scrollPaneCanvasContainer.vvalueProperty().addListener(chglstnrScrollBarEventAttacher);
+		
+		rootNode.widthProperty().addListener(lsnrRootNodeSize);
+		rootNode.heightProperty().addListener(lsnrRootNodeSize);
+		
+		tabpaneMain.getSelectionModel().selectedItemProperty().addListener(lsnrTabSelected);
 		
 		ArrayList<Tab> tabList = vaTabBuilder(
 				ETabTags.HILBERT,
@@ -131,7 +243,7 @@ public class MainWindowController
 				ETabTags.SIERPINSKI_TRIANGLE,
 				ETabTags.PLANT);
 		
-		tabList.get(0).setContent(scrollPaneTest);
+		tabList.get(0).setContent(scrollPaneCanvasContainer);
 		
 		tabList.forEach(tab -> tabpaneMain.getTabs().add(tab));
 		
@@ -141,128 +253,6 @@ public class MainWindowController
 		mapPausableNodes.add(sliderStartX);
 		mapPausableNodes.add(sliderStartY);
 		mapPausableNodes.add(tabpaneMain);
-		
-		EventHandler<MouseEvent> eventScrollPaneMouseEvent = new EventHandler<MouseEvent>()
-		{
-			private double vvalue;
-			private double hvalue;
-			
-			@Override
-			public void handle(MouseEvent mEvent)
-			{
-				if(mEvent.getEventType() == MouseEvent.MOUSE_PRESSED)
-				{
-					vvalue = scrollPaneTest.getVvalue();
-					hvalue = scrollPaneTest.getHvalue();
-				}
-				else if(mEvent.getEventType() == MouseEvent.MOUSE_RELEASED)
-				{
-					if(vvalue != scrollPaneTest.getVvalue() || hvalue != scrollPaneTest.getHvalue())
-					{
-						vvalue = scrollPaneTest.getVvalue();
-						hvalue = scrollPaneTest.getHvalue();
-						System.out.println("drawing...");
-						cmdDraw();
-					}
-				}
-			}
-		};
-		
-		scrollPaneTest.setOnMousePressed(eventScrollPaneMouseEvent);
-		scrollPaneTest.setOnMouseReleased(eventScrollPaneMouseEvent);
-		
-		//TODO:new, works
-		ChangeListener<Number> chglstnrScrollBarEventAttacher = new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-
-				for(Node node : scrollPaneTest.lookupAll(".scroll-bar"))
-				{
-					if(node instanceof ScrollBar)
-					{
-						node.addEventHandler(MouseEvent.MOUSE_PRESSED, eventScrollPaneMouseEvent);
-						node.addEventHandler(MouseEvent.MOUSE_RELEASED, eventScrollPaneMouseEvent);
-					}
-				}
-				scrollPaneTest.hvalueProperty().removeListener(this);
-				scrollPaneTest.vvalueProperty().removeListener(this);
-			}
-		};
-		
-		scrollPaneTest.hvalueProperty().addListener(chglstnrScrollBarEventAttacher);
-		scrollPaneTest.vvalueProperty().addListener(chglstnrScrollBarEventAttacher);
-		
-		
-		//TODO: new
-		rootNode.heightProperty().addListener(new ChangeListener<Number>(){
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				//TODO: hmmm..
-				double newHeight = arg2.doubleValue() + 1000;
-				if(newHeight <= MAX_HEIGHT)
-				{
-					canvasCurrentDrawTarget.setHeight(newHeight);
-				}
-				else
-				{
-					canvasCurrentDrawTarget.setHeight(MAX_HEIGHT);
-				}
-			}});
-		rootNode.widthProperty().addListener(new ChangeListener<Number>(){
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-				//TODO: hmmm..
-				double newWidth = arg2.doubleValue() + 1000;
-				if(newWidth <= MAX_WIDTH)
-				{
-					canvasCurrentDrawTarget.setWidth(newWidth);
-				}
-				else
-				{
-					canvasCurrentDrawTarget.setWidth(MAX_WIDTH);
-				}
-			}});
-		
-		tabpaneMain.getSelectionModel().selectedItemProperty().addListener( (obs, oldTab, newTab) -> {
-			oldTab.setContent(null);
-			newTab.setContent(scrollPaneTest);
-			GraphicsContext gctx = canvasCurrentDrawTarget.getGraphicsContext2D();
-			gctx.clearRect(0, 0, canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight());
-		});
-		
-		eventlsystemBuildRunning = e -> setNodesDisabled(mapPausableNodes, true);
-		eventlsystemBuildFailed = e -> setNodesDisabled(mapPausableNodes, false);
-		
-		eventlsystemBuildSuccess = e -> {
-			setNodesDisabled(mapPausableNodes, false);
-			GraphicsContext gctx = canvasCurrentDrawTarget.getGraphicsContext2D();
-			gctx.clearRect(0, 0, canvasCurrentDrawTarget.getWidth(), canvasCurrentDrawTarget.getHeight());
-			
-			try
-			{
-				//TODO: debug
-				int entityCount = 0;
-				for(Line line : (Collection<Line>)e.getSource().getValue())
-				{
-					gctx.beginPath();
-					gctx.moveTo(line.getStartX(), line.getStartY());
-					gctx.lineTo(line.getEndX(), line.getEndY());
-					
-					gctx.setLineWidth(2);
-					
-					gctx.closePath();
-					gctx.stroke();
-					//TODO: debug
-					++entityCount;
-				}
-				//TODO: debug
-				System.out.println( String.format("drew %d line nodes", entityCount) );
-			}
-			catch(ClassCastException ex)
-			{
-				System.err.println(ex.getMessage());
-			}
-		};
 	}
 	
 	@FXML
@@ -276,19 +266,12 @@ public class MainWindowController
 		int lineLength = (int)sliderLineWidth.getValue();
 		int iterations = (int)sliderIterations.getValue();
 		
-		//TODO: until we add something to the GUI in the future, we can control the starting rotation of the resulting curve here
-		Point2D pstart;
-		Line lstart;
-		
-		pstart = new Point2D(lineLength, 0);
-			
-		lstart = new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + pstart.getX(), sliderStartY.getValue() + pstart.getY());
 		double offsetVert = 0;
 		double offsetHorz = 0;
 		
 		//credit: https://stackoverflow.com/a/40682080
 		//TODO: since we're now dealing with the scrollbar in the controller, is there any way we can add our own ScrollBars instead of relying on this lookupAll method?
-		for(Node node : scrollPaneTest.lookupAll(".scroll-bar"))
+		for(Node node : scrollPaneCanvasContainer.lookupAll(".scroll-bar"))
 		{
 			if(node instanceof ScrollBar)
 			{
@@ -311,38 +294,47 @@ public class MainWindowController
 		buildTask.setOnSucceeded(eventlsystemBuildSuccess);
 		buildTask.setOnFailed(eventlsystemBuildFailed);
 		buildTask.setIterations(iterations);
-		buildTask.setOrigin(lstart);
 		
 		tabpaneMain.getTabs().forEach(tab -> {
 			if(tab.isSelected())
 			{
+				//TODO: until we add something to the GUI in the future, starting rotation of the resulting curve is set here as well
 				switch(ETabTags.valueOf(tab.getId()))
 				{
 				case BINARY_TREE:
+					buildTask.setOrigin(new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + lineLength, sliderStartY.getValue()));
 					buildTask.setLSystem(new BinaryCurve());
 					break;
 				case HILBERT:
+					buildTask.setOrigin(new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue(), sliderStartY.getValue() + lineLength));
 					buildTask.setLSystem(new HilbertCurve());
 					break;
 				case KOCH_A:
+					buildTask.setOrigin(new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + lineLength, sliderStartY.getValue()));
 					buildTask.setLSystem(new KochCurve());
 					break;
 				case KOCH_B:
+					buildTask.setOrigin(new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + lineLength, sliderStartY.getValue()));
 					buildTask.setLSystem(new KochSnowflakeCurve());
 					break;
 				case KOCH_C:
+					buildTask.setOrigin(new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + lineLength, sliderStartY.getValue()));
 					buildTask.setLSystem(new KochIslandLakeCurve());
 					break;
 				case KOCH_D:
+					buildTask.setOrigin(new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue(), sliderStartY.getValue() + lineLength));
 					buildTask.setLSystem(new KochVariantACurve());
 					break;
 				case PLANT:
+					buildTask.setOrigin(new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue() + lineLength, sliderStartY.getValue()));
 					buildTask.setLSystem(new PlantCurve());
 					break;
 				case SIERPINSKI_ARROW:
+					buildTask.setOrigin(new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue(), sliderStartY.getValue() + lineLength));
 					buildTask.setLSystem(new SierpinskiArrowCurve());
 					break;
 				case SIERPINSKI_TRIANGLE:
+					buildTask.setOrigin(new Line(sliderStartX.getValue(), sliderStartY.getValue(), sliderStartX.getValue(), sliderStartY.getValue() + lineLength));
 					buildTask.setLSystem(new SierpinskiTriangleCurve());
 					break;
 				default:
@@ -353,7 +345,7 @@ public class MainWindowController
 			}
 		});
 
-		buildTask.setDrawArea(new BoundingBox(offsetHorz, offsetVert, scrollPaneTest.getWidth(), scrollPaneTest.getHeight()));
+		buildTask.setDrawArea(new BoundingBox(offsetHorz, offsetVert, scrollPaneCanvasContainer.getWidth(), scrollPaneCanvasContainer.getHeight()));
 		
 		Thread buildThread = new Thread(buildTask);
 		buildThread.start();

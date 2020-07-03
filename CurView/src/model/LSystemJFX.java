@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 
 import javafx.geometry.BoundingBox;
@@ -37,7 +38,7 @@ public abstract class LSystemJFX extends LSystem<Line, BoundingBox>
 	{
 		if(origin == null || iterations < 0 || boundingBox == null)
 		{
-			return new ArrayList<Line>();
+			return Collections.<Line>emptyList();
 		}
 		
 		Collection<Line> rvalCollection = new ArrayList<Line>();
