@@ -8,9 +8,9 @@ import javafx.stage.Stage;
 
 public class CurView extends Application
 {
-	private static final int WINDOW_WIDTH = 800;
-	private static final int WINDOW_HEIGHT = 600;
-	private static final String FXML_FILE = "../view/mainWindow.fxml";
+	private static final int WINDOW_WIDTH = 1024;
+	private static final int WINDOW_HEIGHT = 768;
+	private static final String FXML_FILE = "/view/mainWindow.fxml";
 	private static final String WINDOW_TITLE = "Curve Viewer";
 	
 	public static void main(String[] args)
